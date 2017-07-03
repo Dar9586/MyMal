@@ -21,7 +21,7 @@ import com.dar.mymal.utils.downloader.DownloadURLAuth;
  * Created by stopp on 28/06/2017.
  */
 public class LoginData {
-    static String user,pass,enco;
+    static String user,enco;
     static boolean log=false;
     public LoginData(String user,String enco,boolean ok){
         this.user = user;
@@ -36,7 +36,6 @@ public class LoginData {
         }catch(InterruptedException|ExecutionException e){}
         if(ok) {
             this.user = user;
-            this.pass = pass;
             this.enco = new String(Base64.encode((user+":"+pass).getBytes(),1));
             log = true;
         }
