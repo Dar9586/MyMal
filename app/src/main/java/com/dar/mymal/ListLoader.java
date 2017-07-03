@@ -2,22 +2,15 @@ package com.dar.mymal;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
+import android.support.v7.widget.SnapHelper;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -27,24 +20,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import com.dar.mymal.entries.Anime;
 import com.dar.mymal.entries.Entry;
-import com.dar.mymal.entries.Manga;
+import com.dar.mymal.utils.EntryAdapter;
 import com.dar.mymal.utils.LoginData;
 import com.dar.mymal.utils.MALUtils;
-import com.dar.mymal.utils.downloader.DownloadImage;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ListLoader extends AppCompatActivity
@@ -53,7 +36,8 @@ public class ListLoader extends AppCompatActivity
     int actuallySee=0;
 
     private RecyclerView mRecyclerView;
-    private LinearLayoutManager mLinearLayoutManager;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     List<List<Entry>>[] entries;
     @Override
@@ -75,8 +59,12 @@ public class ListLoader extends AppCompatActivity
         Log.e("Entries","Starter");
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mLinearLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLinearLayoutManager);
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        SnapHelper helper = new LinearSnapHelper();
+        helper.attachToRecyclerView(mRecyclerView);
+
 
 
         /*for(int a=0;a<entries.length;a++)
@@ -206,16 +194,23 @@ public class ListLoader extends AppCompatActivity
             @Override
             public boolean onDoubleTapEvent(MotionEvent e) {return false;}
         });
+        /*
+
         LayoutInflater factory = LayoutInflater.from(this);
         View myView=null;
         LinearLayout sss=(LinearLayout)findViewById(R.id.entry_scroll);
-        sss.removeAllViews();
+        sss.removeAllViews();*/
         String pathImg= Environment.getExternalStorageDirectory().getAbsolutePath()+"/myMalCache";
         File cacheFolder=new File(pathImg);
         cacheFolder.mkdir();
         File[] temp=cacheFolder.listFiles();
         List<String> files= new ArrayList<>();
         for(int a=0;a<temp.length;a++)files.add(temp[a].getName());
+
+
+/*
+
+
         for(int a=0;a<entries[anime?0:1].get(actuallySee).size();a++){
             Log.e("logEntry",entries[anime?0:1].get(actuallySee).get(a).toString());
             Entry ent=entries[anime?0:1].get(actuallySee).get(a);
@@ -240,7 +235,10 @@ public class ListLoader extends AppCompatActivity
             myView.setMinimumHeight(200);
 
             sss.addView(myView);
-        }
+        }*/
+
+        mAdapter = new EntryAdapter(entries[anime?0:1].get(actuallySee).toArray(new Entry[entries[anime?0:1].get(actuallySee).size()]),useLessData,files);
+        mRecyclerView.setAdapter(mAdapter);
 
 
     }
