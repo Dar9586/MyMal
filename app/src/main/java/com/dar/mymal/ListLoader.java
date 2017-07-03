@@ -4,25 +4,26 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.LinearSnapHelper;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SnapHelper;
-import android.util.Log;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSnapHelper;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SnapHelper;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.ListView;
 
+import com.dar.mymal.adapters.AnimeAdapter;
+import com.dar.mymal.adapters.MangaAdapter;
+import com.dar.mymal.entries.Anime;
 import com.dar.mymal.entries.Entry;
-import com.dar.mymal.utils.EntryAdapter;
+import com.dar.mymal.entries.Manga;
 import com.dar.mymal.utils.LoginData;
 import com.dar.mymal.utils.MALUtils;
 
@@ -32,7 +33,8 @@ import java.util.List;
 
 public class ListLoader extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    boolean anime=true,useLessData=false;
+    boolean anime=true;
+    static boolean useLessData=false;
     int actuallySee=0;
 
     private RecyclerView mRecyclerView;
@@ -55,21 +57,15 @@ public class ListLoader extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        loadEntries(LoginData.getUsername());
-        Log.e("Entries","Starter");
 
+        loadEntries(LoginData.getUsername());
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setOverScrollMode(ListView.OVER_SCROLL_NEVER);
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
         SnapHelper helper = new LinearSnapHelper();
         helper.attachToRecyclerView(mRecyclerView);
-
-
-
-        /*for(int a=0;a<entries.length;a++)
-            for(int b=0;b<entries[a].size();b++)
-                Log.e("Entries",a+" "+b+" "+entries[a].get(b).toString());*/
         loadList(actuallySee,anime);
     }
 
@@ -80,12 +76,7 @@ public class ListLoader extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
+        finish();
     }
 
     @Override
@@ -104,6 +95,10 @@ public class ListLoader extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            /*Intent i=new Intent(getApplicationContext(), SettingActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            i.putExtra("EXIT", true);
+            startActivity(i);*/
             return true;
         }
 
@@ -150,6 +145,7 @@ public class ListLoader extends AppCompatActivity
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         loadEntries(input.getText().toString());
+                        loadList(actuallySee,anime);
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -167,39 +163,6 @@ public class ListLoader extends AppCompatActivity
     }
 
     private void loadList(int actuallySee, boolean anime) {
-        GestureDetector gd=new GestureDetector(this, new GestureDetector.OnGestureListener() {
-            @Override
-            public boolean onDown(MotionEvent e) {return false;}
-            @Override
-            public void onShowPress(MotionEvent e) {}
-            @Override
-            public boolean onSingleTapUp(MotionEvent e) {return false;}
-            @Override
-            public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {return false;}
-            @Override
-            public void onLongPress(MotionEvent e) {}
-            @Override
-            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {return false;}
-        });
-        gd.setOnDoubleTapListener(new GestureDetector.OnDoubleTapListener() {
-            @Override
-            public boolean onSingleTapConfirmed(MotionEvent e) {return false;}
-
-            @Override
-            public boolean onDoubleTap(MotionEvent e) {
-
-                return false;
-            }
-
-            @Override
-            public boolean onDoubleTapEvent(MotionEvent e) {return false;}
-        });
-        /*
-
-        LayoutInflater factory = LayoutInflater.from(this);
-        View myView=null;
-        LinearLayout sss=(LinearLayout)findViewById(R.id.entry_scroll);
-        sss.removeAllViews();*/
         String pathImg= Environment.getExternalStorageDirectory().getAbsolutePath()+"/myMalCache";
         File cacheFolder=new File(pathImg);
         cacheFolder.mkdir();
@@ -207,39 +170,9 @@ public class ListLoader extends AppCompatActivity
         List<String> files= new ArrayList<>();
         for(int a=0;a<temp.length;a++)files.add(temp[a].getName());
 
-
-/*
-
-
-        for(int a=0;a<entries[anime?0:1].get(actuallySee).size();a++){
-            Log.e("logEntry",entries[anime?0:1].get(actuallySee).get(a).toString());
-            Entry ent=entries[anime?0:1].get(actuallySee).get(a);
-            myView= factory.inflate(anime?R.layout.entry_layout_anime:R.layout.entry_layout_manga,null);
-            if(!useLessData){
-                if(files.contains(ent.getID()+".jpg")){
-                    ((ImageView)myView.findViewById(R.id.image)).setBackground(new BitmapDrawable(BitmapFactory.decodeFile(Environment.getExternalStorageDirectory().getAbsolutePath()+"/myMalCache/"+ent.getID()+".jpg")));
-                }
-                else if(!useLessData){
-                    new DownloadImage((ImageView)myView.findViewById(R.id.image),Environment.getExternalStorageDirectory().getAbsolutePath()+"/myMalCache",Integer.toString(ent.getID())).execute(ent.getImageURL());
-                }
-            }
-            ((TextView)myView.findViewById(R.id.title)).setText(Html.fromHtml(ent.getTitle()).toString());
-            try{((TextView)myView.findViewById(R.id.entry_id)).setText(ent.getID());}catch(Exception e){Log.e("IDLOADERERROR",e.getMessage());}
-            ((TextView)myView.findViewById(R.id.status)).setText(ent.getType(true)+" - "+ent.getStatus(anime));
-            if(anime){
-                ((TextView)myView.findViewById(R.id.progress)).setText(((Anime)ent).getMyEpisodes()+"/"+((Anime)ent).getEpisodes());}
-            else{
-                try{((TextView)myView.findViewById(R.id.progress1)).setText(((Manga)ent).getMyChapter()+"/"+((Manga)ent).getChapter());
-                ((TextView)myView.findViewById(R.id.progress2)).setText(((Manga)ent).getMyVolumes()+"/"+((Manga)ent).getVolumes());}catch(Exception e){Log.e("IDLOADERERROR",e.getMessage());}
-            }
-            myView.setMinimumHeight(200);
-
-            sss.addView(myView);
-        }*/
-
-        mAdapter = new EntryAdapter(entries[anime?0:1].get(actuallySee).toArray(new Entry[entries[anime?0:1].get(actuallySee).size()]),useLessData,files);
+        if(anime){mAdapter = new AnimeAdapter(entries[0].get(actuallySee).toArray(new Anime[entries[0].get(actuallySee).size()]),useLessData,files);}
+        else{mAdapter = new MangaAdapter(entries[1].get(actuallySee).toArray(new Manga[entries[1].get(actuallySee).size()]),useLessData,files);}
         mRecyclerView.setAdapter(mAdapter);
-
 
     }
 }

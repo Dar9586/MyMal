@@ -1,103 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:layout_weight="33"
-    android:weightSum="100"
+    android:layout_height="wrap_content"
     >
 
-    <ImageView
-        android:id="@+id/image"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="33"
-        android:scaleType="centerInside" />
+    <android.support.v7.widget.CardView
+        android:id="@+id/itemCardView"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:layout_margin="3dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginTop="3dp"
+        android:padding="3dp"
+        app:cardCornerRadius="1dp"
+        app:cardElevation="4dp">
 
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="67"
-        android:weightSum="100"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="20"
-            android:textAlignment="center"
-            android:text="TITOLO" />
-        <TextView
-            android:id="@+id/entry_id"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            />
-        <TextView
-            android:id="@+id/status"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="20"
-            android:textAlignment="center" />
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="60"
-            android:weightSum="2"
-            android:orientation="vertical">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:weightSum="10"
-            android:gravity="center"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:weightSum="100">
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="33"
+                android:background="@drawable/ic_compare_arrows_black_24dp"
+                android:scaleType="centerInside" />
+
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="6"
-                android:gravity="center"
-                android:layout_gravity="center"
-                android:weightSum="10"
-                android:orientation="vertical">
+                android:layout_weight="67"
+                android:orientation="vertical"
+                android:weightSum="100">
+
                 <TextView
-                    android:id="@+id/progress1"
+                    android:id="@+id/entry_id"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp" />
+
+                <TextView
+                    android:id="@+id/title"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:gravity="center"
-                    android:layout_weight="6"
-                     />
-            </LinearLayout>
-        </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:weightSum="10"
-                android:gravity="center"
-                android:orientation="horizontal">
+                    android:layout_weight="20"
+                    android:textAlignment="center" />
+
+                <TextView
+                    android:id="@+id/status"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="20"
+                    android:textAlignment="center" />
 
                 <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="6"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="60"
                     android:orientation="vertical"
-                    android:gravity="center"
-                    android:weightSum="10">
+                    android:weightSum="2">
 
-                    <TextView
-                        android:id="@+id/progress2"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        android:layout_weight="6"
+                        android:layout_weight="1"
                         android:gravity="center"
-                         />
+                        android:orientation="horizontal"
+                        android:weightSum="10">
 
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            android:layout_weight="6"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:weightSum="10">
+
+                            <TextView
+                                android:id="@+id/progress1"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="6"
+                                android:gravity="center" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:weightSum="10">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="6"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:weightSum="10">
+
+                            <TextView
+                                android:id="@+id/progress2"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="6"
+                                android:gravity="center" />
+                        </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
-            </LinearLayout>
-
-    </LinearLayout>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
 </LinearLayout>
