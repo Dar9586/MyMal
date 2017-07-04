@@ -9,6 +9,7 @@ public class Anime extends Entry{
     int totEpisode,watched;
     public Anime(String xml){
         super(xml);
+        isanime=true;
         id=Integer.parseInt(findTagValue("series_animedb_id"));
         rewatch=findTagValue("my_rewatching")!="0";
         totEpisode=Integer.parseInt(findTagValue("series_episodes"));
@@ -19,6 +20,7 @@ public class Anime extends Entry{
     public int     getEpisodes   (){return totEpisode;}
     public int     getMyEpisodes (){return watched;}
 
+    public void    setMyEpisodes (int x){watched=x;}
     @Override
     public String toString() {
         SimpleDateFormat dtf = new SimpleDateFormat("dd/MM/yyyy");

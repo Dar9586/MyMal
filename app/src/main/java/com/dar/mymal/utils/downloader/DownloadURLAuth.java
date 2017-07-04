@@ -1,5 +1,7 @@
 package com.dar.mymal.utils.downloader;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
@@ -13,17 +15,26 @@ import java.net.URL;
  */
 
 public class DownloadURLAuth extends AsyncTask<String, String, Boolean> {
-    Boolean ok=false;
-    String user,pass,enco;
+    String enco;
+    ProgressDialog pgd;
     /**
      * Before starting background thread
      * */
     @Override
     protected void onPreExecute() {
-
+        pgd.setTitle("Loading ent");
+        pgd.setMessage("Please wait...");
+        pgd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        pgd.show();
     }
-    public DownloadURLAuth(String enco){
+    public DownloadURLAuth(Context cont, String enco){
+        pgd=new ProgressDialog(cont);
         this.enco=enco;
+    }
+    @Override
+    protected void onPostExecute(Boolean image)
+    {
+        pgd.dismiss();
     }
     @Override
     protected Boolean doInBackground(String... f_url) {

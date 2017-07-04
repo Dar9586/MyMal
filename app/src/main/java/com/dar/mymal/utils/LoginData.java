@@ -10,6 +10,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.concurrent.ExecutionException;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Base64;
@@ -28,8 +29,8 @@ public class LoginData {
         this.enco = enco;
         log=true;
     }
-    public LoginData(String user,String pass){
-        DownloadURLAuth c=new DownloadURLAuth(new String(Base64.encode((user+":"+pass).getBytes(),1)));
+    public LoginData(Context cont, String user, String pass){
+        DownloadURLAuth c=new DownloadURLAuth(cont,new String(Base64.encode((user+":"+pass).getBytes(),1)));
         boolean ok=false;
         try {
             ok = c.execute("https://myanimelist.net/api/account/verify_credentials.xml").get();

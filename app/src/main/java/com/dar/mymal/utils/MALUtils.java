@@ -1,5 +1,7 @@
 package com.dar.mymal.utils;
 
+import android.os.AsyncTask;
+
 import com.dar.mymal.entries.*;
 import com.dar.mymal.utils.downloader.DownloadURL;
 import com.dar.mymal.utils.downloader.DownloadURLAuth;
@@ -32,18 +34,16 @@ public  class MALUtils {
         } catch(Exception e) {}
         return "";
     }
-    public static List<List<Entry>>[] getEntries(String user){
-        String[]tempxmls=getList(user,true).split("</anime>");
-        List<List<Entry>>[] list= new List[]{new ArrayList<>(),new ArrayList<>()};
-        list[0].add(new ArrayList<Entry>());list[0].add(new ArrayList<Entry>());list[0].add(new ArrayList<Entry>());list[0].add(new ArrayList<Entry>());list[0].add(new ArrayList<Entry>());
-        list[1].add(new ArrayList<Entry>());list[1].add(new ArrayList<Entry>());list[1].add(new ArrayList<Entry>());list[1].add(new ArrayList<Entry>());list[1].add(new ArrayList<Entry>());
+    public static List<Entry>[][] getEntries(String user){
+        List<Entry>[][] list=new List[][]{{new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>()},{new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>()}};
         List<Integer>nums=new ArrayList<>(Arrays.asList(1,2,3,4,6));
+        String[]tempxmls=getList(user,true).split("</anime>");
         for(int a=0;a<tempxmls.length-1;a++){
-            list[0].get(nums.indexOf(Integer.parseInt(Entry.findTagValue("my_status",tempxmls[a])))).add(new Anime(tempxmls[a]));
+            list[0][nums.indexOf(Integer.parseInt(Entry.findTagValue("my_status",tempxmls[a])))].add(new Anime(tempxmls[a]));
         }
         tempxmls=getList(user,false).split("</manga>");
         for(int a=0;a<tempxmls.length-1;a++){
-            list[1].get(nums.indexOf(Integer.parseInt(Entry.findTagValue("my_status",tempxmls[a])))).add(new Manga(tempxmls[a]));
+            list[1][nums.indexOf(Integer.parseInt(Entry.findTagValue("my_status",tempxmls[a])))].add(new Manga(tempxmls[a]));
         }
         return  list;
     }
@@ -78,12 +78,5 @@ public  class MALUtils {
             ol=l+2;}
         return fina.toString();
     }
-    public static void removeFromList(int id){
-        new DownloadURLAuth(LoginData.enco).execute("https://myanimelist.net/api/animelist/delete/"+id+".xml");
-    }
-    public static void addToList(int id){
-        new DownloadURLAuth(LoginData.enco).execute("https://myanimelist.net/api/mangalist/add/"+id+".xml?data=%3C?xml%20version=%221.0%22%20encoding=%22UTF-8%22?%3E%3Centry%3E%3Cepisode%3E0%3C/episode%3E%3Cstatus%3E6%3C/status%3E%3Cscore%3E%3C/score%3E%3Cstorage_type%3E%3C/storage_type%3E%3Cstorage_value%3E%3C/storage_value%3E%3Ctimes_rewatched%3E%3C/times_rewatched%3E%3Crewatch_value%3E%3C/rewatch_value%3E%3Cdate_start%3E%3C/date_start%3E%3Cdate_finish%3E%3C/date_finish%3E%3Cpriority%3E%3C/priority%3E%3Cenable_discussion%3E%3C/enable_discussion%3E%3Cenable_rewatching%3E%3C/enable_rewatching%3E%3Ccomments%3E%3C/comments%3E%3Ctags%3E%3C/tags%3E%3C/entry%3E");
-    }
 
 }
-

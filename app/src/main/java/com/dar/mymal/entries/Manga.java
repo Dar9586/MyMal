@@ -11,6 +11,7 @@ public class Manga extends Entry {
     int totChapter,totVolume,myChapter,myVolume;
     public Manga(String xml){
         super(xml);
+        isanime=false;
         id=Integer.parseInt(findTagValue("series_mangadb_id"));
         rewatch=findTagValue("my_rereadingg")!="0";
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -23,6 +24,9 @@ public class Manga extends Entry {
     public int     getVolumes   (){return totVolume;}
     public int     getMyChapter (){return myChapter;}
     public int     getMyVolumes (){return myVolume;}
+
+    public void    setMyChapter (int x){myChapter=x;}
+    public void    setMyVolumes (int x){myVolume=x;}
 
     @Override
     public String toString() {

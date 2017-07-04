@@ -19,18 +19,15 @@ public class MainActivity extends AppCompatActivity {
     Button log;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.i("PART","1");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.i("PART","2");
         user = (AutoCompleteTextView) findViewById(R.id.email);
         pass = (EditText) findViewById(R.id.password);
         log = (Button) findViewById(R.id.email_sign_in_button);
-        Log.i("PART","3");
         log.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LoginData s=new LoginData(user.getText().toString(), pass.getText().toString());
+                LoginData s=new LoginData(getBaseContext(),user.getText().toString(), pass.getText().toString());
                 if (s!=null&&s.isLogged()) {
                     SharedPreferences sharedPref = getSharedPreferences("Settings", 0);
                     SharedPreferences.Editor editor=sharedPref.edit();
@@ -45,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        Log.i("PART","4");
         SharedPreferences sharedPref = getSharedPreferences("Settings", 0);
         if(sharedPref.getBoolean(getString(R.string.prop_logged),false)){
             new LoginData(sharedPref.getString(getString(R.string.prop_user),"ERRORE"), sharedPref.getString(getString(R.string.prop_head),"ERRORE"),true);
