@@ -1,6 +1,7 @@
 package com.dar.mymal.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Environment;
@@ -14,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.dar.mymal.EntryActivity;
 import com.dar.mymal.ListLoader;
 import com.dar.mymal.R;
 import com.dar.mymal.entries.Anime;
@@ -99,7 +101,10 @@ public class AnimeAdapter extends RecyclerView.Adapter<AnimeAdapter.ViewHolder> 
                         holder.adder.setVisibility(View.GONE);
                         holder.progress.setVisibility(View.VISIBLE);
                     } else {
-
+                        Intent i=new Intent(view.getContext(), EntryActivity.class);
+                        i.putExtra("ENTRY_ID",ent.getID());
+                        i.putExtra("ENTRY_ISANIME",ent.isAnime());
+                        view.getContext().startActivity(i);
                     }
                 }
             });

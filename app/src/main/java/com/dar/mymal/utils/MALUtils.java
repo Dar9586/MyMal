@@ -1,10 +1,11 @@
 package com.dar.mymal.utils;
 
+import android.content.Context;
 import android.os.AsyncTask;
 
 import com.dar.mymal.entries.*;
+import com.dar.mymal.tuple.Tuple2;
 import com.dar.mymal.utils.downloader.DownloadURL;
-import com.dar.mymal.utils.downloader.DownloadURLAuth;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -47,7 +48,7 @@ public  class MALUtils {
         }
         return  list;
     }
-    public static String getList(String user,boolean anime){
+    public static String getList(String user, boolean anime){
         try {
             return new DownloadURL().execute("https://myanimelist.net/malappinfo.php?u="+user+"&status=all&type="+(anime?"anime":"manga")).get();
         } catch (InterruptedException e) {
@@ -78,5 +79,8 @@ public  class MALUtils {
             ol=l+2;}
         return fina.toString();
     }
-
+    public static Tuple2<Integer,Integer> getIdIndex(List<Entry>en[], int id){
+        for(int a=0;a<5;a++)for(int b=0;b<en[a].size();b++)if(en[a].get(b).getID()==id)return new Tuple2<>(a,b);
+        return null;
+    }
 }

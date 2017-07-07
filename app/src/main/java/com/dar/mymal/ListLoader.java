@@ -1,6 +1,7 @@
 package com.dar.mymal;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Environment;
@@ -9,6 +10,7 @@ import android.support.v4.util.Pair;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,12 +18,17 @@ import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.dar.mymal.adapters.AnimeAdapter;
 import com.dar.mymal.adapters.MangaAdapter;
@@ -48,7 +55,7 @@ public class ListLoader extends AppCompatActivity
     Pair<String,Integer>[] listDataHeader;
     List<Pair<String,Integer>>[] listDataChild;
     ExpandableListView expand;
-
+    final static List<Entry>[][] ownList=MALUtils.getEntries(LoginData.getUsername());;
     List<Entry>[][] entries;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,13 +81,12 @@ public class ListLoader extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         actualUser=LoginData.getUsername();
-        loadEntries(actualUser);
+        entries=ownList;
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setOverScrollMode(ListView.OVER_SCROLL_NEVER);
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
-
         // setting list adapter
         expand=(ExpandableListView)findViewById(R.id.expand_view);
         loadExtendMenu();
@@ -171,20 +177,14 @@ public class ListLoader extends AppCompatActivity
         return true;
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            /*Intent i=new Intent(getApplicationContext(), SettingActivity.class);
-            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            i.putExtra("EXIT", true);
-            startActivity(i);*/
-            return true;
+        switch (id) {
+            case R.id.action_settings:
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -196,17 +196,20 @@ public class ListLoader extends AppCompatActivity
     }
 
     private void loadList(int actuallySee, boolean anime) {
+
+        if(anime){mAdapter = new AnimeAdapter(this,entries[0][actuallySee].toArray(new Anime[entries[0][actuallySee].size()]),useLessData,getCacheFile());}
+        else{mAdapter = new MangaAdapter(this,entries[1][actuallySee].toArray(new Manga[entries[1][actuallySee].size()]),useLessData,getCacheFile());}
+        mRecyclerView.setAdapter(mAdapter);
+
+    }
+    protected static List<String> getCacheFile(){
         String pathImg= Environment.getExternalStorageDirectory().getAbsolutePath()+"/myMalCache";
         File cacheFolder=new File(pathImg);
         cacheFolder.mkdir();
         File[] temp=cacheFolder.listFiles();
         List<String> files= new ArrayList<>();
         for(int a=0;a<temp.length;a++)files.add(temp[a].getName());
-
-        if(anime){mAdapter = new AnimeAdapter(this,entries[0][actuallySee].toArray(new Anime[entries[0][actuallySee].size()]),useLessData,files);}
-        else{mAdapter = new MangaAdapter(this,entries[1][actuallySee].toArray(new Manga[entries[1][actuallySee].size()]),useLessData,files);}
-        mRecyclerView.setAdapter(mAdapter);
-
+        return files;
     }
 }
 

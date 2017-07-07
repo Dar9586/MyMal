@@ -9,14 +9,16 @@ import java.util.Date;
  * Created by atopp on 28/06/2017.
  */
 public abstract class Entry {
-    protected String title,synonyms,imageURL,XML;
+    protected String title,synonyms,imageURL,XML,tags;
     protected int id,type,status,score,mystatus;
     protected boolean rewatch,isanime;
     protected Date start,finish,mystart,myfinish;
     protected String findTagValue(String tag){
+        if(XML.contains('<'+tag+"/>"))return "";
         return XML.substring(XML.indexOf('<'+tag+'>')+tag.length()+2,XML.indexOf("</"+tag+'>'));
     }
     public static String findTagValue(String tag,String XML){
+        if(XML.contains('<'+tag+"/>"))return "";
         return XML.substring(XML.indexOf('<'+tag+'>')+tag.length()+2,XML.indexOf("</"+tag+'>'));
     }
     public Entry(String xml){
@@ -31,6 +33,7 @@ public abstract class Entry {
             e.printStackTrace();
         }
         title=findTagValue("series_title");
+        tags=findTagValue("my_tags");
         synonyms=findTagValue("series_synonyms");
         imageURL=findTagValue("series_image");
         type=Integer.parseInt(findTagValue("series_type"));
@@ -44,6 +47,7 @@ public abstract class Entry {
     public int     getID          ()         {return id;}
     public String  getTitle       ()         {return title;}
     public String  getSynonyms    ()         {return synonyms;}
+    public String  getTags        ()         {return tags;}
     public int     getType        ()         {return type;}
     public int     getStatus      ()         {return status;}
     public Date    getStart       ()         {return start;}
@@ -71,6 +75,7 @@ public abstract class Entry {
     public void    setMyStart     (Date    x) {mystart=x;}
     public void    setMyFinish    (Date    x) {myfinish=x;}
     public void    setScore       (int     x) {score=x;}
+    public void    setTags        (String  x) {tags=x;}
     public void    setMyStatus    (int     x) {mystatus=x;}
     public void    setRewatch     (boolean x) {rewatch=x;}
 

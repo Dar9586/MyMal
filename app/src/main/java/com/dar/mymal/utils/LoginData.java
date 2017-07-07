@@ -16,7 +16,7 @@ import android.os.Environment;
 import android.util.Base64;
 import android.util.Log;
 
-import com.dar.mymal.utils.downloader.DownloadURLAuth;
+import com.dar.mymal.utils.downloader.DownloadURL;
 
 /**
  * Created by stopp on 28/06/2017.
@@ -29,11 +29,11 @@ public class LoginData {
         this.enco = enco;
         log=true;
     }
-    public LoginData(Context cont, String user, String pass){
-        DownloadURLAuth c=new DownloadURLAuth(cont,new String(Base64.encode((user+":"+pass).getBytes(),1)));
+    public LoginData(String user, String pass){
+        DownloadURL c=new DownloadURL(new String(Base64.encode((user+":"+pass).getBytes(),1)));
         boolean ok=false;
         try {
-            ok = c.execute("https://myanimelist.net/api/account/verify_credentials.xml").get();
+            ok = c.execute("https://myanimelist.net/api/account/verify_credentials.xml").get()!="";
         }catch(InterruptedException|ExecutionException e){}
         if(ok) {
             this.user = user;

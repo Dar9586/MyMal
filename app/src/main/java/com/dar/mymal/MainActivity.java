@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         log.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LoginData s=new LoginData(getBaseContext(),user.getText().toString(), pass.getText().toString());
+                LoginData s=new LoginData(user.getText().toString(), pass.getText().toString());
                 if (s!=null&&s.isLogged()) {
                     SharedPreferences sharedPref = getSharedPreferences("Settings", 0);
                     SharedPreferences.Editor editor=sharedPref.edit();
