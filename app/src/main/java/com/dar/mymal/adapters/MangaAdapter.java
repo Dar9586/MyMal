@@ -1,6 +1,7 @@
 package com.dar.mymal.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Environment;
@@ -14,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.dar.mymal.EntryActivity;
 import com.dar.mymal.ListLoader;
 import com.dar.mymal.R;
 import com.dar.mymal.entries.Manga;
@@ -97,10 +99,17 @@ public class MangaAdapter extends RecyclerView.Adapter<MangaAdapter.ViewHolder> 
             holder.master.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    if (holder.adder1.getVisibility() == View.VISIBLE||holder.adder2.getVisibility() == View.VISIBLE) {
                     holder.adder1.setVisibility(View.GONE);
                     holder.progress1.setVisibility(View.VISIBLE);
                     holder.adder2.setVisibility(View.GONE);
-                    holder.progress2.setVisibility(View.VISIBLE);
+                    holder.progress2.setVisibility(View.VISIBLE);}
+                    else{
+                        Intent i=new Intent(view.getContext(), EntryActivity.class);
+                        i.putExtra("ENTRY_ID",ent.getID());
+                        i.putExtra("ENTRY_ISANIME",ent.isAnime());
+                        view.getContext().startActivity(i);
+                    }
                 }
             });
             holder.adder1.setOnClickListener(new View.OnClickListener() {

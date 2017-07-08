@@ -38,6 +38,7 @@ import com.dar.mymal.entries.Entry;
 import com.dar.mymal.entries.Manga;
 import com.dar.mymal.utils.LoginData;
 import com.dar.mymal.utils.MALUtils;
+import com.dar.mymal.utils.Sorter;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ public class ListLoader extends AppCompatActivity
     Pair<String,Integer>[] listDataHeader;
     List<Pair<String,Integer>>[] listDataChild;
     ExpandableListView expand;
-    final static List<Entry>[][] ownList=MALUtils.getEntries(LoginData.getUsername());;
+    static List<Entry>[][] ownList=MALUtils.getEntries(LoginData.getUsername());;
     List<Entry>[][] entries;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +82,7 @@ public class ListLoader extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         actualUser=LoginData.getUsername();
+        setTitle(actualUser+"'s List");
         entries=ownList;
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
@@ -163,6 +165,11 @@ public class ListLoader extends AppCompatActivity
 
     void loadEntries(String user){
         entries=MALUtils.getEntries(user);
+        for(int a=0;a<entries.length;a++){
+            for(int b=0;b<entries[a].length;b++){
+                entries[a][b]=Sorter.sortByName(entries[a][b]);
+            }
+        }
         setTitle(user+"'s List");
     }
 

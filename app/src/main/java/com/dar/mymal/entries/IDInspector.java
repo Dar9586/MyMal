@@ -10,6 +10,8 @@ import com.dar.mymal.utils.downloader.DownloadURL;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -70,23 +72,37 @@ public class IDInspector {
         String str="";
         try{
 Log.w("SSDASSA",Integer.toString(html.indexOf("icon-block mt8")));
-        str=html.substring(html.indexOf("icon-block mt8")+16,html.indexOf("clearfix mauto mt16")-12).replace("1indicates a weighted score. Please note that 'Not yet aired' titles are excluded.","")
-                .replace("2based on the top anime page. Please note that 'Not yet aired' and 'R18+' titles are excluded.","");}catch(RuntimeException e){}
+        str=html.substring(html.indexOf(anime?"icon-block mt8":"icon-facebook")+16,html.indexOf("clearfix mauto mt16")-12).replace("indicates a weighted score. Please note that 'Not yet aired' titles are excluded.","")
+                .replace("based on the top anime page. Please note that 'Not yet aired' and 'R18+' titles are excluded.","");}catch(RuntimeException e){}
         String titles[]={"Alternative Titles","Information","Statistics"};
         Tuple2<String,List<Tuple2<String,String>>>[]fin=new Tuple2[]{new Tuple2(titles[0],new ArrayList<>()),new Tuple2(titles[1],new ArrayList<>()),new Tuple2(titles[2],new ArrayList<>())};
         str=str.replaceAll("<[^>]*>","");
-        Log.e("CIAONE",str);
         for(int a=0;a<titles.length;a++)str=str.replace(titles[a],"");
         List<String> values=new ArrayList<>();
         values.addAll(Arrays.asList(new String[]{"English","Synonyms","Japanese","Type","Episodes","Volumes","Chapters","Status",
                 "Serialization","Aired","Authors","Premiered","Published","Broadcast","Producers",
                 "Licensors","Studios","Source","Genres","Duration","Rating","Score","Ranked","Popularity","Members","Favorites"}));
-        for(int a=0;a<values.size();a++)if(!str.contains(values.get(a)))values.remove(a--);
-        int y=values.indexOf("Type");
-        for(int a=0;a<values.size();a++){
-            fin[a<y?0:a<values.size()-5?1:2].getB().add(new Tuple2(values.get(a),str.substring(str.indexOf(values.get(a))
-                    +values.get(a).length()+1,(a+1)==values.size()?str.length():
-                    str.indexOf(values.get(a+1))).replace("  ","").trim()));
+        List<Tuple2<Integer,String>>jj=new ArrayList<>();
+        for(int a=0;a<values.size();a++)if(str.contains(values.get(a)))jj.add(new Tuple2(str.indexOf(values.get(a)),values.get(a)));
+        Collections.sort(jj, new Comparator<Tuple2<Integer, String>>() {
+            @Override
+            public int compare(Tuple2<Integer, String> integerStringTuple2, Tuple2<Integer, String> t1) {
+                return integerStringTuple2.getA()-t1.getA();
+            }
+        });
+        Log.w("SORTED",jj.toString());
+        Log.w("Array",values.toString());
+        int y=-1;
+        for(int a=0;a<jj.size();a++)if(jj.get(a).getB()=="Type"){y=a;break;}
+        for(int a=0;a<jj.size();a++){
+            int where=a<y?0:a<jj.size()-5?1:2;
+            int start=jj.get(a).getA()+jj.get(a).getB().length()+1;
+            int end=(a+1)==jj.size()?str.length():jj.get(a+1).getA();
+            Log.e("VALUES",where+" , "+start+" , "+end+" , "+a+",");
+            String ooo=str.substring(start,end).replace("  ","").trim();
+            Tuple2<String,String>op=new Tuple2(jj.get(a).getB(),ooo);
+            Log.e("VALUES",where+" , "+start+" , "+end+" , "+op);
+            fin[where].getB().add(op);
         }
         info=fin;
     }

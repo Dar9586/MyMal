@@ -43,7 +43,7 @@ public abstract class Entry {
     }
     static String[][] statusName={{"Unknown","Airing","Finished","Not yet aired"},{"Unknown","Publishing","Finished","Not yet published"}};
     static String[][] typeName={{"Unknown","TV","OVA","Movie","Special","ONA","Music"},{"Unknown","Manga","Novel","One-shot","Doujinshi","Manhwa","Manhua","OEL"}};
-    static String[][] myStatusName={{"Watching","Completed","On-Hold","Dropped","Plan to watch"},{"Unknown","Completed","On-Hold","Dropped","Plan to read"}};
+    static String[][] myStatusName={{"Watching","Completed","On-Hold","Dropped","Plan to watch"},{"Reading","Completed","On-Hold","Dropped","Plan to read"}};
     public int     getID          ()         {return id;}
     public String  getTitle       ()         {return title;}
     public String  getSynonyms    ()         {return synonyms;}
