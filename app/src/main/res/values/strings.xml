@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MyMal</string>
+    <string name="app_name">OnMAL</string>
 
     <!-- Strings related to login -->
     <string name="prop_head">header</string>

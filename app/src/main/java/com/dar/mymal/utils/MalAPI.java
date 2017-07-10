@@ -21,28 +21,32 @@ import static com.dar.mymal.R.id.status;
 
 public class MalAPI {
     public static void add(Context cont,int id,boolean anime){
-        DownloadURL c=new DownloadURL(cont,LoginData.enco);
+        DownloadURL c=new DownloadURL(LoginData.enco);
         try {
             if (anime)
-                c.execute("https://myanimelist.net/api/animelist/add/" + id + ".xml?data=%3C?xml%20version=%221.0%22%20encoding=%22UTF-8%22?%3E%3Centry%3E%3Cepisode%3E0%3C/episode%3E%3Cstatus%3E6%3C/status%3E%3Cscore%3E%3C/score%3E%3Cstorage_type%3E%3C/storage_type%3E%3Cstorage_value%3E%3C/storage_value%3E%3Ctimes_rewatched%3E%3C/times_rewatched%3E%3Crewatch_value%3E%3C/rewatch_value%3E%3Cdate_start%3E%3C/date_start%3E%3Cdate_finish%3E%3C/date_finish%3E%3Cpriority%3E%3C/priority%3E%3Cenable_discussion%3E%3C/enable_discussion%3E%3Cenable_rewatching%3E%3C/enable_rewatching%3E%3Ccomments%3E%3C/comments%3E%3Ctags%3E%3C/tags%3E%3C/entry%3E").get();
+                c.execute("https://myanimelist.net/api/animelist/add/" + id + ".xml?data=%3C?xml%20version=%221.0%22%20encoding=%22UTF-8%22?%3E%3Centry%3E%3Cepisode%3E0%3C/episode%3E%3Cstatus%3E5%3C/status%3E%3Cscore%3E%3C/score%3E%3Cstorage_type%3E%3C/storage_type%3E%3Cstorage_value%3E%3C/storage_value%3E%3Ctimes_rewatched%3E%3C/times_rewatched%3E%3Crewatch_value%3E%3C/rewatch_value%3E%3Cdate_start%3E%3C/date_start%3E%3Cdate_finish%3E%3C/date_finish%3E%3Cpriority%3E%3C/priority%3E%3Cenable_discussion%3E%3C/enable_discussion%3E%3Cenable_rewatching%3E%3C/enable_rewatching%3E%3Ccomments%3E%3C/comments%3E%3Ctags%3E%3C/tags%3E%3C/entry%3E").get();
             else
-                c.execute("https://myanimelist.net/api/mangalist/add/" + id + ".xml?data=%3C?xml%20version=%221.0%22%20encoding=%22UTF-8%22?%3E%3Centry%3E%3Cchapter%3E0%3C/chapter%3E%3Cvolume%3E0%3C/volume%3E%3Cstatus%3E6%3C/status%3E%3Cscore%3E%3C/score%3E%3Ctimes_reread%3E%3C/times_reread%3E%3Creread_value%3E%3C/reread_value%3E%3Cdate_start%3E%3C/date_start%3E%3Cdate_finish%3E%3C/date_finish%3E%3Cpriority%3E%3C/priority%3E%3Cenable_discussion%3E%3C/enable_discussion%3E%3Cenable_rereading%3E%3C/enable_rereading%3E%3Ccomments%3E%3C/comments%3E%3Cscan_group%3E%3C/scan_group%3E%3Ctags%3E%3C/tags%3E%3Cretail_volumes%3E%3C/retail_volumes%3E%3C/entry%3E").get();
+                c.execute("https://myanimelist.net/api/mangalist/add/" + id + ".xml?data=%3C?xml%20version=%221.0%22%20encoding=%22UTF-8%22?%3E%3Centry%3E%3Cchapter%3E0%3C/chapter%3E%3Cvolume%3E0%3C/volume%3E%3Cstatus%3E5%3C/status%3E%3Cscore%3E%3C/score%3E%3Ctimes_reread%3E%3C/times_reread%3E%3Creread_value%3E%3C/reread_value%3E%3Cdate_start%3E%3C/date_start%3E%3Cdate_finish%3E%3C/date_finish%3E%3Cpriority%3E%3C/priority%3E%3Cenable_discussion%3E%3C/enable_discussion%3E%3Cenable_rereading%3E%3C/enable_rereading%3E%3Ccomments%3E%3C/comments%3E%3Cscan_group%3E%3C/scan_group%3E%3Ctags%3E%3C/tags%3E%3Cretail_volumes%3E%3C/retail_volumes%3E%3C/entry%3E").get();
+            EntryList.reloadOwn(anime);
         }catch(Exception e){Log.e("APIERROR",e.getMessage());}
          }
-    public static void remove(Context cont,Entry a){
-        DownloadURL c=new DownloadURL(cont,LoginData.enco);
-            c.execute("https://myanimelist.net/api/"+(a.isAnime()?"animelist":"mangalist")+"/delete/"+a.getID()+".xml");
+    public static void remove(Context cont,int id,boolean anime){
+        DownloadURL c=new DownloadURL(LoginData.enco);
+        try {
+            Log.w("?????????????????",c.execute("https://myanimelist.net/api/" + (anime ? "animelist" : "mangalist") + "/delete/" + id + ".xml").get());
+            EntryList.reloadOwn(anime);
+        }catch (InterruptedException|ExecutionException e){Log.e("ApiError",e.getMessage());}
 
     }
 
     public static void update(Context cont, Entry a){
-        DownloadURL c=new DownloadURL(cont,LoginData.enco);
-
+        DownloadURL c=new DownloadURL(LoginData.enco);
+        try{
             if(a.isAnime()){
                 Anime b=(Anime)a;
                 c.execute("https://myanimelist.net/api/animelist/update/"+b.getID()+".xml?data=%3C?xml%20version=%221.0%22%20encoding=%22UTF-8%22?%3E%3Centry%3E%3C" +
                         "episode%3E"+b.getMyEpisodes()+"%3C/episode%3E%3C" +
-                        "status%3E"+b.getMyStatus()+"%3C/status%3E%3C" +
+                        "status%3E"+b.getMyStatus(true)+"%3C/status%3E%3C" +
                         "score%3E"+b.getScore()+"%3C/score%3E%3C" +
                         "storage_type%3E%3C/storage_type%3E%3C" +
                         "storage_value%3E%3C/storage_value%3E%3C" +
@@ -54,7 +58,7 @@ public class MalAPI {
                         "enable_discussion%3E%3C/enable_discussion%3E%3C" +
                         "enable_rewatching%3E%3C/enable_rewatching%3E%3C" +
                         "comments%3E%3C/comments%3E%3C" +
-                        "tags%3E"+b.getTags()+"%3C/tags%3E%3C/entry%3E");
+                        "tags%3E"+b.getTags()+"%3C/tags%3E%3C/entry%3E").get();
             }
             else{
                 Manga b=(Manga)a;
@@ -62,7 +66,7 @@ public class MalAPI {
                         "%3Centry%3E"+
                         "%3Cchapter%3E"+b.getMyChapter()+"%3C/chapter%3E"+
                         "%3Cvolume%3E"+b.getMyVolumes()+"%3C/volume%3E"+
-                        "%3Cstatus%3E"+b.getMyStatus()+"%3C/status%3E"+
+                        "%3Cstatus%3E"+b.getMyStatus(true)+"%3C/status%3E"+
                         "%3Cscore%3E"+b.getScore()+"%3C/score%3E"+
                         "%3Ctimes_reread%3E%3C/times_reread%3E"+
                         "%3Creread_value%3E%3C/reread_value%3E"+
@@ -75,10 +79,10 @@ public class MalAPI {
                         "%3Cscan_group%3E%3C/scan_group%3E"+
                         "%3Ctags%3E"+b.getTags()+"%3C/tags%3E"+
                         "%3Cretail_volumes%3E%3C/retail_volumes%3E"+
-                        "%3C/entry%3E");
-
-
-        }
+                        "%3C/entry%3E").get();
+            }
+            EntryList.reloadOwn(a.isAnime());
+        }catch (InterruptedException|ExecutionException e){Log.e("ApiError",e.getMessage());}
     }
     public static List<SearchEntry> search(Context cont, String s, boolean anime){
         DownloadURL c=new DownloadURL(cont,LoginData.enco);

@@ -67,7 +67,7 @@ public class SearchEntry {
         status=findTagValue("status");
         score=Float.parseFloat(findTagValue("score"));
         id = Integer.parseInt(findTagValue("id"));
-        episodes=Integer.parseInt(findTagValue("episodes"));
+        episodes=Integer.parseInt(findTagValue(isanime?"episodes":"chapters"));
     }
 
     @Override

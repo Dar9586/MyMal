@@ -35,18 +35,27 @@ public  class MALUtils {
         } catch(Exception e) {}
         return "";
     }
-    public static List<Entry>[][] getEntries(String user){
-        List<Entry>[][] list=new List[][]{{new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>()},{new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>()}};
+    public static List<Entry>[] getEntriesAnime(String user){
+        List<Entry>[] list=new List[]{new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>()};
         List<Integer>nums=new ArrayList<>(Arrays.asList(1,2,3,4,6));
         String[]tempxmls=getList(user,true).split("</anime>");
         for(int a=0;a<tempxmls.length-1;a++){
-            list[0][nums.indexOf(Integer.parseInt(Entry.findTagValue("my_status",tempxmls[a])))].add(new Anime(tempxmls[a]));
+            list[nums.indexOf(Integer.parseInt(Entry.findTagValue("my_status",tempxmls[a])))].add(new Anime(tempxmls[a]));
         }
-        tempxmls=getList(user,false).split("</manga>");
+        return list;
+    }
+    public static List<Entry>[] getEntriesManga(String user){
+        List<Entry>[] list=new List[]{new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>()};
+        List<Integer>nums=new ArrayList<>(Arrays.asList(1,2,3,4,6));
+        String[]tempxmls=getList(user,false).split("</manga>");
         for(int a=0;a<tempxmls.length-1;a++){
-            list[1][nums.indexOf(Integer.parseInt(Entry.findTagValue("my_status",tempxmls[a])))].add(new Manga(tempxmls[a]));
+            list[nums.indexOf(Integer.parseInt(Entry.findTagValue("my_status",tempxmls[a])))].add(new Manga(tempxmls[a]));
         }
-        return  list;
+        return list;
+    }
+
+    public static List<Entry>[][] getEntries(String user){
+        return new List[][]{getEntriesAnime(user),getEntriesManga(user)};
     }
     public static String getList(String user, boolean anime){
         try {

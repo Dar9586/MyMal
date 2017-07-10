@@ -29,8 +29,8 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="33"
-                android:background="@drawable/ic_compare_arrows_black_24dp"
-                android:scaleType="centerInside" />
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/cancel" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -71,7 +71,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:gravity="center"
+                        android:gravity="end"
                         android:orientation="horizontal"
                         android:weightSum="10">
 
@@ -99,6 +99,20 @@
                                 android:layout_weight="6"
                                 android:text="100/100"
                                 android:gravity="center" />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="2"
+                            android:weightSum="7"
+                            android:gravity="bottom"
+                            android:orientation="vertical"
+                            >
+                            <TextView
+                                android:id="@+id/score"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="3" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>

@@ -50,8 +50,7 @@ public class DownloadURL extends AsyncTask<String, String, String> {
     @Override
     protected String doInBackground(String... f_url) {
         try {
-            Log.e("LOGDATA","ENCODEDASYNC: "+enco);
-
+            Log.d("URL"+enco,f_url[0]);
             HttpURLConnection connection = (HttpURLConnection) new URL(f_url[0]).openConnection();
             if(enco!=""){
                 connection.setRequestProperty  ("Authorization", "Basic " + enco);

@@ -1,5 +1,7 @@
 package com.dar.mymal;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -9,6 +11,9 @@ import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -25,6 +30,7 @@ import com.dar.mymal.entries.IDInspector;
 import com.dar.mymal.entries.Manga;
 import com.dar.mymal.tuple.Tuple2;
 import com.dar.mymal.tuple.Tuple3;
+import com.dar.mymal.utils.EntryList;
 import com.dar.mymal.utils.LoginData;
 import com.dar.mymal.utils.MALUtils;
 import com.dar.mymal.utils.MalAPI;
@@ -40,18 +46,20 @@ import java.util.List;
 public class EntryActivity extends AppCompatActivity {
     int id;
     boolean anime,tageditshown=false;
-    String url;
+    String url,title;
     IDInspector entry;
     Tuple2<Integer,Integer>where;
+    Anime r1;Manga r2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entry);
+        title=getIntent().getStringExtra("ENTRY_TITLE");
         id=getIntent().getIntExtra("ENTRY_ID",-1);
         anime=getIntent().getBooleanExtra("ENTRY_ISANIME",true);
         url="http://www.myanimelist.net/"+(anime?"anime":"manga")+'/'+id;
         entry=new IDInspector(id,anime);
-        where=MALUtils.getIdIndex(ListLoader.ownList[anime?0:1],id);
+        where=MALUtils.getIdIndex(EntryList.getOwnlist()[anime?0:1],id);
         List<String>files=ListLoader.getCacheFile();
         Tuple2<String, List<Tuple2<String, String>>>[] infos=entry.getInfo();
         final List<Tuple2<String,List<Tuple3<Integer,Boolean,String>>>> rela=entry.getRel();
@@ -60,10 +68,11 @@ public class EntryActivity extends AppCompatActivity {
         LinearLayout lny1=(LinearLayout)findViewById(R.id.entry_titles);
         LinearLayout sss=((LinearLayout)findViewById(R.id.entry_relative));
         ((TextView)findViewById(R.id.entry_synopsis)).setText(entry.getDescription());
+        ((TextView)findViewById(R.id.entry_title)).setText(title);
 
 
         if(files.contains("A"+id+".jpg")){
-            ((ImageView)findViewById(R.id.entry_image)).setBackground(new BitmapDrawable(BitmapFactory.decodeFile(Environment.getExternalStorageDirectory().getAbsolutePath()+"/myMalCache/A"+id+".jpg")));
+            ((ImageView)findViewById(R.id.entry_image)).setImageDrawable(new BitmapDrawable(BitmapFactory.decodeFile(Environment.getExternalStorageDirectory().getAbsolutePath()+"/myMalCache/A"+id+".jpg")));
         }else/* if(!useLessData)*/{
             new DownloadImage(((ImageView)findViewById(R.id.entry_image)),Environment.getExternalStorageDirectory().getAbsolutePath()+"/myMalCache","A"+Integer.toString(id)).execute(entry.getImageURL());
         }
@@ -85,7 +94,6 @@ public class EntryActivity extends AppCompatActivity {
                 findViewById(R.id.add_to_list).setVisibility(View.GONE);
                 findViewById(R.id.is_in_list).setVisibility(View.VISIBLE);
                 findViewById(R.id.entry_tags_layout).setVisibility(View.VISIBLE);
-                ListLoader.ownList=MALUtils.getEntries(LoginData.getUsername());
                 loadListVariables();
 
             }
@@ -114,6 +122,7 @@ public class EntryActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         Intent i=new Intent(v.getContext(), EntryActivity.class);
                         i.putExtra("ENTRY_ID",rela.get(c).getB().get(d).getA());
+                        i.putExtra("ENTRY_TITLE",rela.get(c).getB().get(d).getC());
                         i.putExtra("ENTRY_ISANIME",rela.get(c).getB().get(d).getB());
                         v.getContext().startActivity(i);
                     }
@@ -131,9 +140,9 @@ public class EntryActivity extends AppCompatActivity {
         findViewById(R.id.add_to_list).setVisibility(View.VISIBLE);
     }
     void loadListVariables(){
-            Entry r=ListLoader.ownList[anime?0:1][where.getA()].get(where.getB());
-            final Anime r1=anime?(Anime)r:null;
-            final Manga r2=anime?null:(Manga)r;
+        where=MALUtils.getIdIndex(EntryList.getOwnlist()[anime?0:1],id);
+            Entry r=EntryList.getOwnlist()[anime?0:1][where.getA()].get(where.getB());
+            if(anime)r1=(Anime)r;else r2=(Manga)r;
             ((Spinner)findViewById(R.id.entry_score)).setSelection(r.getScore());
             ((Spinner)findViewById(R.id.entry_status)).setSelection(r.getMyStatus()-1);
             List<String>arl=new ArrayList<>(Arrays.asList(Entry.getMyStatusList(anime)));
@@ -145,7 +154,7 @@ public class EntryActivity extends AppCompatActivity {
             ((Spinner)findViewById(R.id.entry_status)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    ListLoader.ownList[anime?0:1][where.getA()].get(where.getB()).setMyStatus(position+1);
+                    (anime?r1:r2).setMyStatus(position==4?6:(position+1));
                     executeUpdate(view);
                 }
 
@@ -157,10 +166,9 @@ public class EntryActivity extends AppCompatActivity {
             ((Spinner)findViewById(R.id.entry_score)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    ListLoader.ownList[anime?0:1][where.getA()].get(where.getB()).setScore(position);
+                    (anime?r1:r2).setScore(position);
                     executeUpdate(view);
                 }
-
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {
 
@@ -174,7 +182,7 @@ public class EntryActivity extends AppCompatActivity {
                         findViewById(R.id.entry_tags).setVisibility(View.VISIBLE);
                         ((TextView)findViewById(R.id.entry_tags)).setText(((EditText)findViewById(R.id.entry_tags_edit)).getText().toString());
                         tageditshown=false;
-                        ListLoader.ownList[anime?0:1][where.getA()].get(where.getB()).setTags(((EditText)findViewById(R.id.entry_tags_edit)).getText().toString());
+                        (anime?r1:r2).setTags(((EditText)findViewById(R.id.entry_tags_edit)).getText().toString());
                         executeUpdate(view);
                     }else{
                         findViewById(R.id.entry_tags_edit).setVisibility(View.VISIBLE);
@@ -194,14 +202,15 @@ public class EntryActivity extends AppCompatActivity {
                 views.get(0).findViewById(R.id.updater_adder).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        ((Anime) ListLoader.ownList[0][where.getA()].get(where.getB())).setMyEpisodes(
-                                ((Button)(views.get(0).findViewById(R.id.updater_adder))).getText().toString()=="+1"?
-                                        (((Anime) ListLoader.ownList[0][where.getA()].get(where.getB())).getMyEpisodes()+1):
-                                        Integer.parseInt(((EditText)views.get(0).findViewById(R.id.updater_new_episode)).getText().toString()));
+                        r1.setMyEpisodes(((Button)(views.get(0).findViewById(R.id.updater_adder))).getText().toString()=="+1"?(r1.getMyEpisodes()+1):Integer.parseInt(((EditText)views.get(0).findViewById(R.id.updater_new_episode)).getText().toString()));
                         returnToDefault(views.get(0));
-                        executeUpdate(view);
-                        ((TextView)views.get(0).findViewById(R.id.updater_episode_static)).setText(((Anime) ListLoader.ownList[0][where.getA()].get(where.getB())).getMyEpisodes()+"/"+r1.getEpisodes());
-                        ((EditText)views.get(0).findViewById(R.id.updater_new_episode)).setText(Integer.toString (((Anime) ListLoader.ownList[0][where.getA()].get(where.getB())).getMyEpisodes()));
+                        if(r1.getMyEpisodes()==r1.getEpisodes()){
+                            makeCompleted(view);
+                        }
+                        else
+                            executeUpdate(view);
+                        ((TextView)views.get(0).findViewById(R.id.updater_episode_static)).setText(r1.getMyEpisodes()+"/"+r1.getEpisodes());
+                        ((EditText)views.get(0).findViewById(R.id.updater_new_episode)).setText(Integer.toString (r1.getMyEpisodes()));
                     }
                 });
             }else{
@@ -211,14 +220,16 @@ public class EntryActivity extends AppCompatActivity {
                 views.get(0).findViewById(R.id.updater_adder).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        ((Manga) ListLoader.ownList[anime?0:1][where.getA()].get(where.getB())).setMyChapter(
-                                ((Button)(views.get(0).findViewById(R.id.updater_adder))).getText().toString()=="+1"?
-                                        (((Manga) ListLoader.ownList[anime?0:1][where.getA()].get(where.getB())).getMyChapter()+1):
-                                        Integer.parseInt(((EditText)views.get(0).findViewById(R.id.updater_new_episode)).getText().toString()));
+                        r2.setMyChapter(
+                                ((Button)(views.get(0).findViewById(R.id.updater_adder))).getText().toString()=="+1"?(r2.getMyChapter()+1):Integer.parseInt(((EditText)views.get(0).findViewById(R.id.updater_new_episode)).getText().toString()));
                         returnToDefault(views.get(0));
-                        executeUpdate(view);
-                        ((TextView)views.get(0).findViewById(R.id.updater_episode_static)).setText(((Manga) ListLoader.ownList[anime?0:1][where.getA()].get(where.getB())).getMyChapter()+"/"+r2.getChapter());
-                        ((EditText)views.get(0).findViewById(R.id.updater_new_episode)).setText(Integer.toString (((Manga) ListLoader.ownList[anime?0:1][where.getA()].get(where.getB())).getMyChapter()));
+                        if(r2.getMyChapter()==r2.getChapter()){
+                            makeCompleted(view);
+                        }
+                        else
+                            executeUpdate(view);
+                        ((TextView)views.get(0).findViewById(R.id.updater_episode_static)).setText(r2.getMyChapter()+"/"+r2.getChapter());
+                        ((EditText)views.get(0).findViewById(R.id.updater_new_episode)).setText(Integer.toString (r2.getMyChapter()));
                     }
                 });
                 ((TextView) views.get(1).findViewById(R.id.updater_episode_static)).setText(r2.getMyVolumes() + "/" + r2.getVolumes());
@@ -227,14 +238,16 @@ public class EntryActivity extends AppCompatActivity {
                 views.get(1).findViewById(R.id.updater_adder).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        ((Manga) ListLoader.ownList[anime?0:1][where.getA()].get(where.getB())).setMyVolumes(
-                                ((Button)(views.get(1).findViewById(R.id.updater_adder))).getText().toString()=="+1"?
-                                        (((Manga) ListLoader.ownList[anime?0:1][where.getA()].get(where.getB())).getMyVolumes()+1):
-                                        Integer.parseInt(((EditText)views.get(1).findViewById(R.id.updater_new_episode)).getText().toString()));
+                        r2.setMyVolumes(
+                        ((Button)(views.get(1).findViewById(R.id.updater_adder))).getText().toString()=="+1"?(r2.getMyVolumes()+1):Integer.parseInt(((EditText)views.get(1).findViewById(R.id.updater_new_episode)).getText().toString()));
                         returnToDefault(views.get(1));
-                        executeUpdate(view);
-                        ((TextView)views.get(1).findViewById(R.id.updater_episode_static)).setText(((Manga) ListLoader.ownList[anime?0:1][where.getA()].get(where.getB())).getMyVolumes()+"/"+r2.getVolumes());
-                        ((EditText)views.get(1).findViewById(R.id.updater_new_episode)).setText(Integer.toString (((Manga) ListLoader.ownList[anime?0:1][where.getA()].get(where.getB())).getMyVolumes()));
+                        if(r2.getMyVolumes()==r2.getVolumes()){
+                            makeCompleted(view);
+                        }
+                        else
+                            executeUpdate(view);
+                        ((TextView)views.get(1).findViewById(R.id.updater_episode_static)).setText(r2.getMyVolumes()+"/"+r2.getVolumes());
+                        ((EditText)views.get(1).findViewById(R.id.updater_new_episode)).setText(Integer.toString (r2.getMyVolumes()));
                     }
                 });
             }
@@ -251,7 +264,7 @@ public class EntryActivity extends AppCompatActivity {
     }
 
     void executeUpdate(View view){
-        MalAPI.update(view.getContext(),ListLoader.ownList[anime?0:1][where.getA()].get(where.getB()));
+        MalAPI.update(view.getContext(),anime?r1:r2);
     }
     void setListener(View view){
         boolean f=view.findViewById(R.id.updater_sub_layout).getVisibility()==View.VISIBLE;
@@ -265,5 +278,52 @@ public class EntryActivity extends AppCompatActivity {
         view.findViewById(R.id.updater_episode_static).setVisibility(View.VISIBLE);
         ((Button)view.findViewById(R.id.updater_open_episodes_menu)).setText("✍");
         ((Button)view.findViewById(R.id.updater_adder)).setText("+1");
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater mi = getMenuInflater();
+        mi.inflate(R.menu.entry_menu, menu);
+
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id) {
+            case R.id.action_remove:
+                MalAPI.remove(this,(anime?r1:r2).getID(),anime);
+                r1=null;r2=null;
+                loadListNull();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+    void makeCompleted(final View view){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle((anime?"Anime":"Manga")+" completed");
+        builder.setMessage("Set this "+(anime?"Anime":"Manga")+" as completed?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                (anime?r1:r2).setMyStatus(2);
+                executeUpdate(view);
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+                ((Spinner)findViewById(R.id.entry_status)).setSelection(1);
+                executeUpdate(view);
+            }
+        });
+        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialogInterface) {
+                dialogInterface.cancel();
+                executeUpdate(view);
+            }
+        });
+        builder.show();
     }
 }

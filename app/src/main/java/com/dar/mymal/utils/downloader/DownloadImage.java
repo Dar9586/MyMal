@@ -41,7 +41,7 @@ public class DownloadImage extends AsyncTask<String, Void, Void> {
     @Override
     protected void onPostExecute(Void image)
     {
-        img.setBackground(kkk);
+        img.setImageDrawable(kkk);
     }
     private Drawable downloadImage(String _url)
     {

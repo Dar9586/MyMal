@@ -14,6 +14,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+            <TextView
+                android:id="@+id/entry_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TextView" />
     <LinearLayout
         android:id="@+id/entry_titles"
         android:layout_width="match_parent"

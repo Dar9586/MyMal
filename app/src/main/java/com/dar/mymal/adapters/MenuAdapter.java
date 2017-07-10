@@ -1,8 +1,6 @@
 package com.dar.mymal.adapters;
 
 import android.content.Context;
-import android.graphics.Typeface;
-import android.support.v4.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,8 +8,8 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
 import com.dar.mymal.R;
+import com.dar.mymal.tuple.Tuple2;
 
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -19,11 +17,11 @@ import java.util.List;
  */
 
 public class MenuAdapter extends BaseExpandableListAdapter {
-    public Pair<String,Integer>[]headers;
-    List<Pair<String,Integer>>childs[];
+    public Tuple2<String,Integer>[]headers;
+    List<Tuple2<String,Integer>>childs[];
     Context context;
 
-    public MenuAdapter(Context context,Pair<String,Integer>[]headers,List<Pair<String,Integer>>childs[]){
+    public MenuAdapter(Context context,Tuple2<String,Integer>[]headers,List<Tuple2<String,Integer>>childs[]){
         this.context = context;
         this.headers=headers;
         this.childs=childs;
@@ -37,14 +35,14 @@ public class MenuAdapter extends BaseExpandableListAdapter {
             convertView = layoutInflater.inflate(R.layout.header_menu, null);
         }
         View f;
-        if(headers[groupPosition].second==-1){
+        if(headers[groupPosition].getB()==-1){
             f=LayoutInflater.from(convertView.getContext()).inflate(R.layout.header_menu_void, parent, false);
-            ((TextView)f.findViewById(R.id.expand_name)).setText(headers[groupPosition].first);
+            ((TextView)f.findViewById(R.id.expand_name)).setText(headers[groupPosition].getA());
             return f;
         }
         f=LayoutInflater.from(convertView.getContext()).inflate(R.layout.header_menu, parent, false);
-        ((TextView)f.findViewById(R.id.expand_name)).setText(headers[groupPosition].first);
-        ((TextView)f.findViewById(R.id.expand_num)).setText(headers[groupPosition].second.toString());
+        ((TextView)f.findViewById(R.id.expand_name)).setText(headers[groupPosition].getA());
+        ((TextView)f.findViewById(R.id.expand_num)).setText(headers[groupPosition].getB().toString());
         return f;
     }
 
@@ -56,8 +54,8 @@ public class MenuAdapter extends BaseExpandableListAdapter {
             convertView = layoutInflater.inflate(R.layout.child_menu, null);
         }
         View f=LayoutInflater.from(convertView.getContext()).inflate(R.layout.child_menu, parent, false);
-        ((TextView)f.findViewById(R.id.expand_name)).setText(childs[groupPosition].get(childPosition).first);
-        ((TextView)f.findViewById(R.id.expand_num)).setText(childs[groupPosition].get(childPosition).second.toString());
+        ((TextView)f.findViewById(R.id.expand_name)).setText(childs[groupPosition].get(childPosition).getA());
+        ((TextView)f.findViewById(R.id.expand_num)).setText(childs[groupPosition].get(childPosition).getB().toString());
         return f;
     }
 

@@ -61,12 +61,13 @@ public abstract class Entry {
     public String  getMyFinish    (String f) {return new SimpleDateFormat(f).format(myfinish);}
     public int     getScore       ()         {return score;}
     public int     getMyStatus    ()         {return mystatus;}
+    public int     getMyStatus    (boolean s){return (s&&mystatus==5)?6:mystatus;}
     public boolean getRewatch     ()         {return rewatch;}
     public boolean isAnime        ()         {return isanime;}
 
     public String  getType        (boolean s){return typeName[s?0:1][type];}
     public String  getStatus      (boolean s){return statusName[s?0:1][status];}
-    public String  getMyStatus    (boolean s){return myStatusName[s?0:1][mystatus];}
+    //public String  getMyStatus    (boolean s){return myStatusName[s?0:1][mystatus];}
     public static String[]getStatusList  (boolean s){return statusName[s?0:1];}
     public static String[]getTypeList    (boolean s){return typeName[s?0:1];}
     public static String[]getMyStatusList(boolean s){return myStatusName[s?0:1];}
