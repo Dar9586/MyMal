@@ -65,7 +65,7 @@ public class DownloadURL extends AsyncTask<String, String, String> {
                 fina.append(line);
             }
             return fina.toString();
-        } catch(IOException e) {Log.e("OnMALError","DownloadImage DownloadError: "+ e.getMessage());}
+        } catch(IOException e) {Log.e("OnMALError","DownloadURL DownloadError: "+ e.getMessage());}
         return "";
     }
 

@@ -3,12 +3,11 @@ package com.dar.mymal.utils;
 import java.util.concurrent.ExecutionException;
 
 import android.util.Base64;
+import android.util.Log;
 
 import com.dar.mymal.downloader.DownloadURL;
 
-/**
- * Created by stopp on 28/06/2017.
- */
+
 public class LoginData {
     static String user,enco;
     static boolean log=false;
@@ -22,7 +21,8 @@ public class LoginData {
         boolean ok=false;
         try {
             ok = c.execute("https://myanimelist.net/api/account/verify_credentials.xml").get()!="";
-        }catch(InterruptedException|ExecutionException e){}
+        }catch(InterruptedException|ExecutionException e){
+            Log.e("OnMALError","Error logging in, "+e.getMessage());}
         if(ok) {
             this.user = user;
             this.enco = Base64.encodeToString((user+":"+pass).getBytes(),Base64.NO_WRAP);

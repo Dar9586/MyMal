@@ -91,6 +91,26 @@ public class EntryActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        findViewById(R.id.view_rec).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i=new Intent(v.getContext(), RecommendationsActivity.class);
+                i.putExtra("ENTRY_ID",id);
+                i.putExtra("ENTRY_TITLE",title);
+                i.putExtra("ENTRY_ISANIME",anime);
+                v.getContext().startActivity(i);
+            }
+        });
+        findViewById(R.id.view_rew).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i=new Intent(v.getContext(), ReviewActivity.class);
+                i.putExtra("ENTRY_ID",id);
+                i.putExtra("ENTRY_TITLE",title);
+                i.putExtra("ENTRY_ISANIME",anime);
+                v.getContext().startActivity(i);
+            }
+        });
         findViewById(R.id.add_to_list).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

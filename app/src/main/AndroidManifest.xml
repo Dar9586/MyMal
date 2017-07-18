@@ -29,7 +29,9 @@
         <activity
             android:name=".ActivitySearch"
             android:label="Search"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".RecommendationsActivity" />
+        <activity android:name=".ReviewActivity"></activity>
     </application>
 
 </manifest>
