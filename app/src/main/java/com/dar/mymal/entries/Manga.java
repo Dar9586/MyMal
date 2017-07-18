@@ -31,6 +31,6 @@ public class Manga extends Entry {
     @Override
     public String toString() {
         SimpleDateFormat dtf = new SimpleDateFormat("dd/MM/yyyy");
-        return String.format("{ID:%d, Title:%s, Synonyms:%s, Type:%d, Chapters:%d, Volumes:%d, Status:%d, Start:%s, Finish:%s, ImageURL:%s, MyChapter:%d, MyVolume:%d, MyStart:%s, MyFinish:%s, Score:%d, Status:%d, Rewatch:%b}",id,title,synonyms,type,totChapter,totVolume,status,dtf.format(start),dtf.format(finish),imageURL,myChapter,myVolume,dtf.format(mystart),dtf.format(myfinish),score,mystatus,rewatch);
+        return String.format("{ID:%d, Title:%s, Synonyms:%s, Type:%d, Chapters:%d, Volumes:%d, Status:%d, Start:%s, Finish:%s, ImageURL:%s, MyChapter:%d, MyVolume:%d, MyStart:%s, MyFinish:%s, Score:%d, MyStatus:%d, Rewatch:%b}",id,title,synonyms,type,totChapter,totVolume,status,dtf.format(start),dtf.format(finish),imageURL,myChapter,myVolume,dtf.format(mystart),dtf.format(myfinish),score,mystatus,rewatch);
     }
 }

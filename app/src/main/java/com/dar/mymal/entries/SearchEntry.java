@@ -1,5 +1,7 @@
 package com.dar.mymal.entries;
 
+import android.util.Log;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -55,7 +57,7 @@ public class SearchEntry {
             start = format.parse(findTagValue("start_date"));
             finish = format.parse(findTagValue("end_date"));
         } catch (ParseException e) {
-            e.getMessage();
+            Log.e("OnMALError","Error parsing: "+e.getMessage());
         }
         isanime=anime;
         title=findTagValue("title");

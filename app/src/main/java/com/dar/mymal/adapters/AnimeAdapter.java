@@ -16,13 +16,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dar.mymal.EntryActivity;
-import com.dar.mymal.ListLoader;
 import com.dar.mymal.R;
 import com.dar.mymal.entries.Anime;
 import com.dar.mymal.utils.EntryList;
-import com.dar.mymal.utils.LoginData;
 import com.dar.mymal.utils.MalAPI;
-import com.dar.mymal.utils.downloader.DownloadImage;
+import com.dar.mymal.downloader.DownloadImage;
 
 import java.util.List;
 
@@ -77,7 +75,7 @@ public class AnimeAdapter extends RecyclerView.Adapter<AnimeAdapter.ViewHolder> 
         holder.id.setText(Integer.toString(ent.getID()));
         holder.score.setText(Integer.toString(ent.getScore()));
         holder.status.setText(ent.getType(true)+" - "+ent.getStatus(true));
-        holder.progress.setText(ent.getMyEpisodes()+"/"+ent.getEpisodes());
+        holder.progress.setText(ent.getMyEpisodes() + "/" + (ent.getEpisodes()==0?"-":ent.getEpisodes()));
         holder.master.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -93,10 +91,10 @@ public class AnimeAdapter extends RecyclerView.Adapter<AnimeAdapter.ViewHolder> 
                 }
             }
         });
-        if(EntryList.isSame()) {
-            holder.progress.setOnClickListener(new View.OnClickListener() {
+        if(EntryList.isSame()) {            holder.progress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                    holder.adder.setVisibility(View.VISIBLE);
                   holder.progress.setVisibility(View.GONE);
              }
@@ -107,7 +105,7 @@ public class AnimeAdapter extends RecyclerView.Adapter<AnimeAdapter.ViewHolder> 
                     if(ent.getMyEpisodes()<ent.getEpisodes()){
                     ent.setMyEpisodes(ent.getMyEpisodes() + 1);
                     MalAPI.update(context,ent);
-                    holder.progress.setText(ent.getMyEpisodes() + "/" + ent.getEpisodes());}
+                        holder.progress.setText(ent.getMyEpisodes() + "/" + (ent.getEpisodes()==0?"-":ent.getEpisodes()));}
                 }
             });
         }

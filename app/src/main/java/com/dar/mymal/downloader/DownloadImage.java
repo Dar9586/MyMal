@@ -1,13 +1,14 @@
-package com.dar.mymal.utils.downloader;
+package com.dar.mymal.downloader;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.util.Log;
 import android.widget.ImageView;
+
+import com.dar.mymal.R;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -31,7 +32,6 @@ public class DownloadImage extends AsyncTask<String, Void, Void> {
         img=x;
         path=savePath;
         this.name=name+".jpg";
-        Log.i("Pathgenerator",path+"     "+name);
     }
     @Override
     protected Void doInBackground(String... arg0) {
@@ -45,6 +45,7 @@ public class DownloadImage extends AsyncTask<String, Void, Void> {
     }
     private Drawable downloadImage(String _url)
     {
+        Log.i("OnMALInfo","Downloading image from: "+_url);
         URL url;
         BufferedOutputStream out;
         InputStream in;
@@ -64,7 +65,7 @@ public class DownloadImage extends AsyncTask<String, Void, Void> {
             return new BitmapDrawable(bMap);
 
         } catch (Exception e) {
-            Log.e("Error reading file", e.toString());
+            Log.e("OnMALError","DownloadImage DownloadError: "+ e.getMessage());
         }
 
         return null;
@@ -72,6 +73,7 @@ public class DownloadImage extends AsyncTask<String, Void, Void> {
 
         private void saveImage(Bitmap finalBitmap) {
             File file = new File(path,name);
+            Log.i("OnMALInfo","Saving image in: "+file.getAbsolutePath());
             if (!file.exists ()){
             try {
                 FileOutputStream out = new FileOutputStream(file);
@@ -80,7 +82,7 @@ public class DownloadImage extends AsyncTask<String, Void, Void> {
                 out.close();
 
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e("OnMALError","DownloadImage SavingError: "+ e.getMessage());
             }
         }}
 }

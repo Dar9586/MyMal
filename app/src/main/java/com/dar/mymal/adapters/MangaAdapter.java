@@ -1,8 +1,6 @@
 package com.dar.mymal.adapters;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -18,13 +16,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dar.mymal.EntryActivity;
-import com.dar.mymal.ListLoader;
 import com.dar.mymal.R;
 import com.dar.mymal.entries.Manga;
 import com.dar.mymal.utils.EntryList;
-import com.dar.mymal.utils.LoginData;
 import com.dar.mymal.utils.MalAPI;
-import com.dar.mymal.utils.downloader.DownloadImage;
+import com.dar.mymal.downloader.DownloadImage;
 
 import java.util.List;
 
@@ -84,8 +80,8 @@ public class MangaAdapter extends RecyclerView.Adapter<MangaAdapter.ViewHolder> 
         holder.id.setText(Integer.toString(ent.getID()));
         holder.score.setText(Integer.toString(ent.getScore()));
         holder.status.setText(ent.getType(false)+" - "+ent.getStatus(false));
-        holder.progress1.setText(ent.getMyChapter()+"/"+ent.getChapter());
-        holder.progress2.setText(ent.getMyVolumes()+"/"+ent.getVolumes());
+        holder.progress1.setText(ent.getMyChapter() + "/" + (ent.getChapter()==0?"-":ent.getChapter()));
+        holder.progress2.setText(ent.getMyVolumes() + "/" + (ent.getVolumes()==0?"-":ent.getVolumes()));
         holder.master.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -124,7 +120,8 @@ public class MangaAdapter extends RecyclerView.Adapter<MangaAdapter.ViewHolder> 
                     if(ent.getMyChapter()<ent.getChapter()){
                     ent.setMyChapter(ent.getMyChapter() + 1);
                     MalAPI.update(context,ent);
-                    holder.progress1.setText(ent.getMyChapter() + "/" + ent.getChapter());}
+                        holder.progress1.setText(ent.getMyChapter() + "/" + (ent.getChapter()==0?"-":ent.getChapter()));
+                    }
                 }
             });
             holder.adder2.setOnClickListener(new View.OnClickListener() {
@@ -133,7 +130,7 @@ public class MangaAdapter extends RecyclerView.Adapter<MangaAdapter.ViewHolder> 
                     if(ent.getMyVolumes()<ent.getVolumes()){
                     ent.setMyVolumes(ent.getMyVolumes() + 1);
                     MalAPI.update(context,ent);
-                    holder.progress2.setText(ent.getMyVolumes() + "/" + ent.getVolumes());}
+                        holder.progress2.setText(ent.getMyVolumes() + "/" + (ent.getVolumes()==0?"-":ent.getVolumes()));}
                 }
             });
         }

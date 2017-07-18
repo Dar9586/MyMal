@@ -13,10 +13,33 @@ import java.util.List;
 
 public class Sorter {
     public static List<Entry> sortByName(List<Entry>entries){
-        //entries.sort((o1, o2) -> o1.getTitle().compareToIgnoreCase(o2.getTitle()));
         Collections.sort(entries,new Comparator<Entry>(){
             public int compare(Entry o1, Entry o2){
                 return o1.getTitle().compareToIgnoreCase(o2.getTitle());
+            }
+        });
+        return entries;
+    }
+    public static List<Entry> sortByID(List<Entry>entries){
+        Collections.sort(entries,new Comparator<Entry>(){
+            public int compare(Entry o1, Entry o2){
+                return o1.getID()-o2.getID();
+            }
+        });
+        return entries;
+    }
+    public static List<Entry> sortByScore(List<Entry>entries){
+        Collections.sort(entries,new Comparator<Entry>(){
+            public int compare(Entry o1, Entry o2){
+                return o1.getScore()-o2.getScore();
+            }
+        });
+        return entries;
+    }
+    public static List<Entry> sortByType(List<Entry>entries){
+        Collections.sort(entries,new Comparator<Entry>(){
+            public int compare(Entry o1, Entry o2){
+                return o1.getType()-o2.getType();
             }
         });
         return entries;

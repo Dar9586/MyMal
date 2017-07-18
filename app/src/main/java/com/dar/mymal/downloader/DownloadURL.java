@@ -1,4 +1,4 @@
-package com.dar.mymal.utils.downloader;
+package com.dar.mymal.downloader;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -50,9 +50,10 @@ public class DownloadURL extends AsyncTask<String, String, String> {
     @Override
     protected String doInBackground(String... f_url) {
         try {
-            Log.d("URL"+enco,f_url[0]);
+            Log.i("OnMALInfo","Downloading string from: "+f_url[0]);
             HttpURLConnection connection = (HttpURLConnection) new URL(f_url[0]).openConnection();
             if(enco!=""){
+                Log.i("OnMALInfo","Applying encoding");
                 connection.setRequestProperty  ("Authorization", "Basic " + enco);
             }
             connection.setRequestProperty( "User-agent", "Mozilla/5.0 (Windows NT 6.1; WOW64)");
@@ -64,7 +65,7 @@ public class DownloadURL extends AsyncTask<String, String, String> {
                 fina.append(line);
             }
             return fina.toString();
-        } catch(IOException e) {Log.e("LOGDATA","ERROR: "+e.getMessage());}
+        } catch(IOException e) {Log.e("OnMALError","DownloadImage DownloadError: "+ e.getMessage());}
         return "";
     }
 

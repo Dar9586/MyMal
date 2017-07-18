@@ -134,11 +134,6 @@ public class ListLoader extends AppCompatActivity
         SnapHelper helper = new LinearSnapHelper();
         helper.attachToRecyclerView(mRecyclerView);
         loadList(actuallySee,anime);
-    }
-
-    private void makeSearch(String s) {
-        Log.w("Search",s);
-        List<SearchEntry>sea= MalAPI.search(this,s,anime);
 
     }
 

@@ -24,6 +24,6 @@ public class Anime extends Entry{
     @Override
     public String toString() {
         SimpleDateFormat dtf = new SimpleDateFormat("dd/MM/yyyy");
-        return String.format("{ID:%d, Title:%s, Synonyms:%s, Type:%d, Episodes:%d, Status:%d, Start:%s, Finish:%s, ImageURL:%s, MyEpisodes:%d, MyStart:%s, MyFinish:%s, Score:%d, Status:%d, Rewatch:%b}",id,title,synonyms,type,totEpisode,status,dtf.format(start),dtf.format(finish),imageURL,watched,dtf.format(mystart),dtf.format(myfinish),score,mystatus,rewatch);
+        return String.format("{ID:%d, Title:%s, Synonyms:%s, Type:%d, Episodes:%d, Status:%d, Start:%s, Finish:%s, ImageURL:%s, MyEpisodes:%d, MyStart:%s, MyFinish:%s, Score:%d, MyStatus:%d, Rewatch:%b}",id,title,synonyms,type,totEpisode,status,dtf.format(start),dtf.format(finish),imageURL,watched,dtf.format(mystart),dtf.format(myfinish),score,mystatus,rewatch);
     }
 }

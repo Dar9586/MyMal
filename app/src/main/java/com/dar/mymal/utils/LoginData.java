@@ -1,22 +1,10 @@
 package com.dar.mymal.utils;
 
-import java.io.BufferedReader;
-import java.io.*;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.StringReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.concurrent.ExecutionException;
 
-import android.content.Context;
-import android.os.AsyncTask;
-import android.os.Environment;
 import android.util.Base64;
-import android.util.Log;
 
-import com.dar.mymal.utils.downloader.DownloadURL;
+import com.dar.mymal.downloader.DownloadURL;
 
 /**
  * Created by stopp on 28/06/2017.
@@ -30,14 +18,14 @@ public class LoginData {
         log=true;
     }
     public LoginData(String user, String pass){
-        DownloadURL c=new DownloadURL(new String(Base64.encode((user+":"+pass).getBytes(),1)));
+        DownloadURL c=new DownloadURL(Base64.encodeToString((user+":"+pass).getBytes(),Base64.NO_WRAP));
         boolean ok=false;
         try {
             ok = c.execute("https://myanimelist.net/api/account/verify_credentials.xml").get()!="";
         }catch(InterruptedException|ExecutionException e){}
         if(ok) {
             this.user = user;
-            this.enco = new String(Base64.encode((user+":"+pass).getBytes(),1));
+            this.enco = Base64.encodeToString((user+":"+pass).getBytes(),Base64.NO_WRAP);
             log = true;
         }
     }

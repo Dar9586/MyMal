@@ -3,6 +3,6 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="spinnerBack">#8e8cff</color>
-    <color name="navigationBarColor">#ff9696</color>
+    <color name="spinnerBack">#8c9eff</color>
+    <color name="navigationBarColor">#b2ff59</color>
 </resources>

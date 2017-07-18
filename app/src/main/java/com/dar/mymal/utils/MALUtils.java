@@ -1,11 +1,10 @@
 package com.dar.mymal.utils;
 
-import android.content.Context;
-import android.os.AsyncTask;
+import android.util.Log;
 
 import com.dar.mymal.entries.*;
 import com.dar.mymal.tuple.Tuple2;
-import com.dar.mymal.utils.downloader.DownloadURL;
+import com.dar.mymal.downloader.DownloadURL;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -36,6 +35,7 @@ public  class MALUtils {
         return "";
     }
     public static List<Entry>[] getEntriesAnime(String user){
+        Log.i("OnMALInfo","Refreshing list anime");
         List<Entry>[] list=new List[]{new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>()};
         List<Integer>nums=new ArrayList<>(Arrays.asList(1,2,3,4,6));
         String[]tempxmls=getList(user,true).split("</anime>");
@@ -45,11 +45,14 @@ public  class MALUtils {
         return list;
     }
     public static List<Entry>[] getEntriesManga(String user){
+        Log.i("OnMALInfo","Refreshing list manga");
         List<Entry>[] list=new List[]{new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>()};
         List<Integer>nums=new ArrayList<>(Arrays.asList(1,2,3,4,6));
         String[]tempxmls=getList(user,false).split("</manga>");
         for(int a=0;a<tempxmls.length-1;a++){
-            list[nums.indexOf(Integer.parseInt(Entry.findTagValue("my_status",tempxmls[a])))].add(new Manga(tempxmls[a]));
+            try{list[nums.indexOf(Integer.parseInt(Entry.findTagValue("my_status",tempxmls[a])))].add(new Manga(tempxmls[a]));}catch(ArrayIndexOutOfBoundsException e){
+                Log.e("OnMALError",a+"    ,    "+new Manga(tempxmls[a]).toString());
+            }
         }
         return list;
     }
@@ -60,10 +63,8 @@ public  class MALUtils {
     public static String getList(String user, boolean anime){
         try {
             return new DownloadURL().execute("https://myanimelist.net/malappinfo.php?u="+user+"&status=all&type="+(anime?"anime":"manga")).get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+        } catch (InterruptedException|ExecutionException e) {
+            Log.e("OnMALError","Error getting list: "+e.getMessage());
         }
         return "";
     }

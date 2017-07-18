@@ -10,19 +10,14 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dar.mymal.EntryActivity;
-import com.dar.mymal.ListLoader;
 import com.dar.mymal.R;
-import com.dar.mymal.entries.Anime;
 import com.dar.mymal.entries.SearchEntry;
-import com.dar.mymal.utils.LoginData;
-import com.dar.mymal.utils.MalAPI;
-import com.dar.mymal.utils.downloader.DownloadImage;
+import com.dar.mymal.downloader.DownloadImage;
 
 import java.util.List;
 

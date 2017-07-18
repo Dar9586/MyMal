@@ -31,8 +31,7 @@ public class MainActivity extends AppCompatActivity {
                 if (s!=null&&s.isLogged()) {
                     SharedPreferences sharedPref = getSharedPreferences("Settings", 0);
                     SharedPreferences.Editor editor=sharedPref.edit();
-                    Log.e("LOGDATA", "User: " + s.getUsername());
-                    Log.e("LOGDATA", "Enco: " + s.getEncoded());
+                    Log.e("LOGDATA", "User: " + s.getUsername()+", Encoded: "+s.getEncoded());
                     editor.clear();
                     editor.putBoolean(getString(R.string.prop_logged), true);
                     editor.putString(getString(R.string.prop_user), s.getUsername());
@@ -50,8 +49,9 @@ public class MainActivity extends AppCompatActivity {
     }
     void launchIntent(){
         Intent i=new Intent(getApplicationContext(), ListLoader.class);
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        i.putExtra("EXIT", true);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         startActivity(i);
     }
 }

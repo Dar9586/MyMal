@@ -1,5 +1,7 @@
 package com.dar.mymal.entries;
 
+import android.util.Log;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -30,7 +32,7 @@ public abstract class Entry {
             mystart = format.parse(findTagValue("my_start_date"));
             myfinish = format.parse(findTagValue("my_finish_date"));
         } catch (ParseException e) {
-            e.printStackTrace();
+            Log.e("OnMALError","Error parsing entry: "+e.getMessage());
         }
         title=findTagValue("series_title");
         tags=findTagValue("my_tags");
@@ -77,7 +79,7 @@ public abstract class Entry {
     public void    setMyFinish    (Date    x) {myfinish=x;}
     public void    setScore       (int     x) {score=x;}
     public void    setTags        (String  x) {tags=x;}
-    public void    setMyStatus    (int     x) {mystatus=x;}
+    public void    setMyStatus    (int     x) {mystatus=x==6?5:x;}
     public void    setRewatch     (boolean x) {rewatch=x;}
 
     public static int findById(Entry[] s, int id){

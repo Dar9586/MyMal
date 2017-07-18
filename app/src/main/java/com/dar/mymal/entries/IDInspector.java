@@ -1,12 +1,11 @@
 package com.dar.mymal.entries;
 
 import android.text.Html;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.dar.mymal.tuple.Tuple2;
 import com.dar.mymal.tuple.Tuple3;
-import com.dar.mymal.utils.downloader.DownloadURL;
+import com.dar.mymal.downloader.DownloadURL;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,11 +28,11 @@ public class IDInspector {
         this.id=id;
         this.anime=anime;
         url="https://myanimelist.net/"+(anime?"anime":"manga")+"/"+id;
-        Log.e("ENTRYURL",url);
+        Log.i("OnMALInfo","Inspecting: "+url);
         try {
             html = new DownloadURL().execute(url).get();
         }catch (InterruptedException|ExecutionException e){
-            Log.e("EntryCrash",e.getMessage());}
+            Log.e("OnMALError",e.getMessage());}
         loadImageURL();
         loadDescription();
         loadRelation();
@@ -64,16 +63,13 @@ public class IDInspector {
             }
             fin.add(new Tuple2(si.get(a).getA(),g));
         }
-        System.out.println(fin.toString());
         rel=fin;
     }
 
     void loadInfo() {
         String str="";
         try{
-Log.w("SSDASSA",Integer.toString(html.indexOf("icon-block mt8")));
-        str=html.substring(html.indexOf(anime?"icon-block mt8":"icon-facebook")+16,html.indexOf("clearfix mauto mt16")-12).replace("indicates a weighted score. Please note that 'Not yet aired' titles are excluded.","")
-                .replace("based on the top anime page. Please note that 'Not yet aired' and 'R18+' titles are excluded.","");}catch(RuntimeException e){}
+        str=html.substring(html.indexOf(anime?"icon-block mt8":"icon-facebook")+16,html.indexOf("clearfix mauto mt16")-12);}catch(RuntimeException e){}
         String titles[]={"Alternative Titles","Information","Statistics"};
         Tuple2<String,List<Tuple2<String,String>>>[]fin=new Tuple2[]{new Tuple2(titles[0],new ArrayList<>()),new Tuple2(titles[1],new ArrayList<>()),new Tuple2(titles[2],new ArrayList<>())};
         str=str.replaceAll("<[^>]*>","");
@@ -90,18 +86,16 @@ Log.w("SSDASSA",Integer.toString(html.indexOf("icon-block mt8")));
                 return integerStringTuple2.getA()-t1.getA();
             }
         });
-        Log.w("SORTED",jj.toString());
-        Log.w("Array",values.toString());
         int y=-1;
         for(int a=0;a<jj.size();a++)if(jj.get(a).getB()=="Type"){y=a;break;}
         for(int a=0;a<jj.size();a++){
             int where=a<y?0:a<jj.size()-5?1:2;
             int start=jj.get(a).getA()+jj.get(a).getB().length()+1;
             int end=(a+1)==jj.size()?str.length():jj.get(a+1).getA();
-            Log.e("VALUES",where+" , "+start+" , "+end+" , "+a+",");
             String ooo=str.substring(start,end).replace("  ","").trim();
+            if(jj.get(a).getB().equals("Score"))ooo=ooo.substring(0,ooo.indexOf(')')+1);
+            if(jj.get(a).getB().equals("Ranked"))ooo=ooo.substring(0,ooo.lastIndexOf('2'));
             Tuple2<String,String>op=new Tuple2(jj.get(a).getB(),ooo);
-            Log.e("VALUES",where+" , "+start+" , "+end+" , "+op);
             fin[where].getB().add(op);
         }
         info=fin;

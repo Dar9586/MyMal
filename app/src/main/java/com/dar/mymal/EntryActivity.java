@@ -1,11 +1,11 @@
 package com.dar.mymal;
 
+import android.animation.Animator;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -31,14 +32,10 @@ import com.dar.mymal.entries.Manga;
 import com.dar.mymal.tuple.Tuple2;
 import com.dar.mymal.tuple.Tuple3;
 import com.dar.mymal.utils.EntryList;
-import com.dar.mymal.utils.LoginData;
 import com.dar.mymal.utils.MALUtils;
 import com.dar.mymal.utils.MalAPI;
-import com.dar.mymal.utils.downloader.DownloadImage;
+import com.dar.mymal.downloader.DownloadImage;
 
-import org.w3c.dom.Text;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -49,6 +46,7 @@ public class EntryActivity extends AppCompatActivity {
     String url,title;
     IDInspector entry;
     Tuple2<Integer,Integer>where;
+    final List<View>views=new ArrayList<>();
     Anime r1;Manga r2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,17 +57,18 @@ public class EntryActivity extends AppCompatActivity {
         anime=getIntent().getBooleanExtra("ENTRY_ISANIME",true);
         url="http://www.myanimelist.net/"+(anime?"anime":"manga")+'/'+id;
         entry=new IDInspector(id,anime);
-        where=MALUtils.getIdIndex(EntryList.getOwnlist()[anime?0:1],id);
         List<String>files=ListLoader.getCacheFile();
         Tuple2<String, List<Tuple2<String, String>>>[] infos=entry.getInfo();
         final List<Tuple2<String,List<Tuple3<Integer,Boolean,String>>>> rela=entry.getRel();
 
+
+        List<String> arl = new ArrayList<>(Arrays.asList(Entry.getMyStatusList(anime)));
+        ((Spinner) findViewById(R.id.entry_status)).setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, arl));
         LinearLayout lny=(LinearLayout)findViewById(R.id.entry_infos);
         LinearLayout lny1=(LinearLayout)findViewById(R.id.entry_titles);
         LinearLayout sss=((LinearLayout)findViewById(R.id.entry_relative));
         ((TextView)findViewById(R.id.entry_synopsis)).setText(entry.getDescription());
         ((TextView)findViewById(R.id.entry_title)).setText(title);
-
 
         if(files.contains("A"+id+".jpg")){
             ((ImageView)findViewById(R.id.entry_image)).setImageDrawable(new BitmapDrawable(BitmapFactory.decodeFile(Environment.getExternalStorageDirectory().getAbsolutePath()+"/myMalCache/A"+id+".jpg")));
@@ -77,7 +76,12 @@ public class EntryActivity extends AppCompatActivity {
             new DownloadImage(((ImageView)findViewById(R.id.entry_image)),Environment.getExternalStorageDirectory().getAbsolutePath()+"/myMalCache","A"+Integer.toString(id)).execute(entry.getImageURL());
         }
 
-
+        findViewById(R.id.entry_title).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                findViewById(R.id.entry_titles).setVisibility(findViewById(R.id.entry_titles).getVisibility()==View.GONE?View.VISIBLE:View.GONE);
+            }
+        });
         //apri su MAL
         findViewById(R.id.entry_view_mal).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,10 +98,81 @@ public class EntryActivity extends AppCompatActivity {
                 findViewById(R.id.add_to_list).setVisibility(View.GONE);
                 findViewById(R.id.is_in_list).setVisibility(View.VISIBLE);
                 findViewById(R.id.entry_tags_layout).setVisibility(View.VISIBLE);
-                loadListVariables();
+                LinearLayout s=(LinearLayout) findViewById(R.id.is_in_list);
+                Animator op= ViewAnimationUtils.createCircularReveal(s,s.getRight(),s.getTop(),(int)Math.hypot(
+                        findViewById(R.id.add_to_list).getWidth(),
+                        findViewById(R.id.entry_image).getHeight()
+                ),0);
+                s.setVisibility(View.VISIBLE);
+                op.start();
+                EntryList.reloadOwn(anime);
+                loadList();
 
             }
         });
+        ((Spinner)findViewById(R.id.entry_status)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if((anime?r1:r2)!=null){
+                (anime?r1:r2).setMyStatus(position==4?6:(position+1));
+                executeUpdate(view);}
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        ((Spinner)findViewById(R.id.entry_score)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if((anime?r1:r2)!=null){
+                    (anime?r1:r2).setScore(position);
+                executeUpdate(view);}
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        findViewById(R.id.entry_tags_changer).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(tageditshown){
+                    findViewById(R.id.entry_tags_edit).setVisibility(View.GONE);
+                    findViewById(R.id.entry_tags).setVisibility(View.VISIBLE);
+                    ((TextView)findViewById(R.id.entry_tags)).setText(((EditText)findViewById(R.id.entry_tags_edit)).getText().toString());
+                    tageditshown=false;
+                    (anime?r1:r2).setTags(((EditText)findViewById(R.id.entry_tags_edit)).getText().toString());
+                    executeUpdate(view);
+                }else{
+                    findViewById(R.id.entry_tags_edit).setVisibility(View.VISIBLE);
+                    findViewById(R.id.entry_tags).setVisibility(View.GONE);
+                    tageditshown=true;
+
+                }
+            }
+        });
+
+        views.add(getLayoutInflater().inflate(R.layout.episode_updater,null));
+        if(!anime)views.add(getLayoutInflater().inflate(R.layout.episode_updater,null));
+        if(anime) {
+
+        }else{
+
+
+        }
+        for(int a=0;a<views.size();a++){
+            final int jj=a;
+            views.get(a).findViewById(R.id.updater_open_episodes_menu).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    setListener(views.get(jj));
+                }
+            });
+            ((LinearLayout)findViewById(R.id.is_in_list)).addView(views.get(a));
+        }
+
         for(int a=0;a<infos.length;a++){
             View v=getLayoutInflater().inflate(R.layout.entry_info_title,null);
             ((TextView)v.findViewById(R.id.entry_info_header)).setText(infos[a].getA());
@@ -130,137 +205,89 @@ public class EntryActivity extends AppCompatActivity {
                 sss.addView(v1);
             }
         }
-
+        loadList();
+    }
+    void loadList(){
+        where=MALUtils.getIdIndex(EntryList.getOwnlist()[anime?0:1],id);
         if(where!=null)loadListVariables();
-            else loadListNull();
+        else loadListNull();
     }
     void loadListNull(){
         findViewById(R.id.is_in_list).setVisibility(View.GONE);
         findViewById(R.id.entry_tags_layout).setVisibility(View.GONE);
         findViewById(R.id.add_to_list).setVisibility(View.VISIBLE);
+
     }
+
     void loadListVariables(){
-        where=MALUtils.getIdIndex(EntryList.getOwnlist()[anime?0:1],id);
-            Entry r=EntryList.getOwnlist()[anime?0:1][where.getA()].get(where.getB());
-            if(anime)r1=(Anime)r;else r2=(Manga)r;
-            ((Spinner)findViewById(R.id.entry_score)).setSelection(r.getScore());
-            ((Spinner)findViewById(R.id.entry_status)).setSelection(r.getMyStatus()-1);
-            List<String>arl=new ArrayList<>(Arrays.asList(Entry.getMyStatusList(anime)));
-            ((Spinner)findViewById(R.id.entry_status)).setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_spinner_item,arl));
-            ((TextView)findViewById(R.id.entry_tags)).setText(r.getTags());
-            ((TextView)findViewById(R.id.entry_tags_edit)).setText(r.getTags());
-            ((TextView)findViewById(R.id.entry_tags)).setText(r.getTags());
-
-            ((Spinner)findViewById(R.id.entry_status)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    (anime?r1:r2).setMyStatus(position==4?6:(position+1));
-                    executeUpdate(view);
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-
-                }
-            });
-            ((Spinner)findViewById(R.id.entry_score)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    (anime?r1:r2).setScore(position);
-                    executeUpdate(view);
-                }
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-
-                }
-            });
-            findViewById(R.id.entry_tags_changer).setOnClickListener(new View.OnClickListener() {
+            Entry r = EntryList.getOwnlist()[anime ? 0 : 1][where.getA()].get(where.getB());
+            if (anime) r1 = (Anime) r;
+            else r2 = (Manga) r;
+            ((Spinner) findViewById(R.id.entry_score)).setSelection(r.getScore());
+            ((Spinner) findViewById(R.id.entry_status)).setSelection(r.getMyStatus()==6?4:r.getMyStatus() - 1);
+            ((TextView) findViewById(R.id.entry_tags)).setText(r.getTags());
+            ((TextView) findViewById(R.id.entry_tags_edit)).setText(r.getTags());
+            ((TextView) findViewById(R.id.entry_tags)).setText(r.getTags());
+        if(anime){
+            ((TextView) views.get(0).findViewById(R.id.updater_episode_static)).setText(r1.getMyEpisodes() + "/" + (r1.getEpisodes()==0?"-":r1.getEpisodes()));
+            ((TextView) views.get(0).findViewById(R.id.updater_episode_total)).setText(""+(r1.getEpisodes()==0?"-":r1.getEpisodes()));
+            ((EditText) views.get(0).findViewById(R.id.updater_new_episode)).setText(Integer.toString(r1.getMyEpisodes()));
+            returnToDefault(views.get(0));
+            views.get(0).findViewById(R.id.updater_adder).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(tageditshown){
-                        findViewById(R.id.entry_tags_edit).setVisibility(View.GONE);
-                        findViewById(R.id.entry_tags).setVisibility(View.VISIBLE);
-                        ((TextView)findViewById(R.id.entry_tags)).setText(((EditText)findViewById(R.id.entry_tags_edit)).getText().toString());
-                        tageditshown=false;
-                        (anime?r1:r2).setTags(((EditText)findViewById(R.id.entry_tags_edit)).getText().toString());
-                        executeUpdate(view);
-                    }else{
-                        findViewById(R.id.entry_tags_edit).setVisibility(View.VISIBLE);
-                        findViewById(R.id.entry_tags).setVisibility(View.GONE);
-                        tageditshown=true;
-
+                    //Log.d("MyMALDebug",r1.getMyEpisodes()+","+(r1.getMyEpisodes()+1)+","+(((Button)(views.get(0).findViewById(R.id.updater_adder))).getText().toString()=="+1")+","+((Button)(views.get(0).findViewById(R.id.updater_adder))).getText().toString());
+                    r1.setMyEpisodes(((Button)(views.get(0).findViewById(R.id.updater_adder))).getText().toString().equals("+1")?(r1.getMyEpisodes()+1):Integer.parseInt(((EditText)views.get(0).findViewById(R.id.updater_new_episode)).getText().toString()));
+                    returnToDefault(views.get(0));
+                    if(r1.getMyEpisodes()==r1.getEpisodes()){
+                        makeCompleted(view);
                     }
+                    else
+                        executeUpdate(view);
+                    ((TextView) views.get(0).findViewById(R.id.updater_episode_static)).setText(r1.getMyEpisodes() + "/" + (r1.getEpisodes()==0?"-":r1.getEpisodes()));
+                    ((EditText)views.get(0).findViewById(R.id.updater_new_episode)).setText(Integer.toString (r1.getMyEpisodes()));
                 }
             });
-            final List<View>views=new ArrayList<>();
-            views.add(getLayoutInflater().inflate(R.layout.episode_updater,null));
-            if(!anime)views.add(getLayoutInflater().inflate(R.layout.episode_updater,null));
-            if(anime) {
-                ((TextView) views.get(0).findViewById(R.id.updater_episode_static)).setText(r1.getMyEpisodes() + "/" + r1.getEpisodes());
-                ((TextView) views.get(0).findViewById(R.id.updater_episode_total)).setText(Integer.toString(r1.getEpisodes()));
-                ((EditText) views.get(0).findViewById(R.id.updater_new_episode)).setText(Integer.toString(r1.getMyEpisodes()));
-                views.get(0).findViewById(R.id.updater_adder).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        r1.setMyEpisodes(((Button)(views.get(0).findViewById(R.id.updater_adder))).getText().toString()=="+1"?(r1.getMyEpisodes()+1):Integer.parseInt(((EditText)views.get(0).findViewById(R.id.updater_new_episode)).getText().toString()));
-                        returnToDefault(views.get(0));
-                        if(r1.getMyEpisodes()==r1.getEpisodes()){
-                            makeCompleted(view);
-                        }
-                        else
-                            executeUpdate(view);
-                        ((TextView)views.get(0).findViewById(R.id.updater_episode_static)).setText(r1.getMyEpisodes()+"/"+r1.getEpisodes());
-                        ((EditText)views.get(0).findViewById(R.id.updater_new_episode)).setText(Integer.toString (r1.getMyEpisodes()));
+        }else{
+            ((TextView) views.get(0).findViewById(R.id.updater_episode_static)).setText(r2.getMyChapter() + "/" + (r2.getChapter()==0?"-":r2.getChapter()));
+            ((TextView) views.get(0).findViewById(R.id.updater_episode_total)).setText(""+(r2.getChapter()==0?"-":r2.getChapter()));
+            ((EditText) views.get(0).findViewById(R.id.updater_new_episode)).setText(Integer.toString(r2.getMyChapter()));
+            ((TextView) views.get(1).findViewById(R.id.updater_episode_static)).setText(r2.getMyVolumes() + "/" + (r2.getVolumes()==0?"-":r2.getVolumes()));
+            ((TextView) views.get(1).findViewById(R.id.updater_episode_total)).setText(""+(r2.getVolumes()==0?"-":r2.getVolumes()));
+            ((EditText) views.get(1).findViewById(R.id.updater_new_episode)).setText(Integer.toString(r2.getMyVolumes()));
+            returnToDefault(views.get(0));
+            returnToDefault(views.get(1));
+            views.get(0).findViewById(R.id.updater_adder).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    r2.setMyChapter(
+                            ((Button)(views.get(0).findViewById(R.id.updater_adder))).getText().toString().equals("+1")?(r2.getMyChapter()+1):Integer.parseInt(((EditText)views.get(0).findViewById(R.id.updater_new_episode)).getText().toString()));
+                    returnToDefault(views.get(0));
+                    if(r2.getMyChapter()==r2.getChapter()){
+                        makeCompleted(view);
                     }
-                });
-            }else{
-                ((TextView) views.get(0).findViewById(R.id.updater_episode_static)).setText(r2.getMyChapter() + "/" + r2.getChapter());
-                ((TextView) views.get(0).findViewById(R.id.updater_episode_total)).setText(Integer.toString(r2.getChapter()));
-                ((EditText) views.get(0).findViewById(R.id.updater_new_episode)).setText(Integer.toString(r2.getMyChapter()));
-                views.get(0).findViewById(R.id.updater_adder).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        r2.setMyChapter(
-                                ((Button)(views.get(0).findViewById(R.id.updater_adder))).getText().toString()=="+1"?(r2.getMyChapter()+1):Integer.parseInt(((EditText)views.get(0).findViewById(R.id.updater_new_episode)).getText().toString()));
-                        returnToDefault(views.get(0));
-                        if(r2.getMyChapter()==r2.getChapter()){
-                            makeCompleted(view);
-                        }
-                        else
-                            executeUpdate(view);
-                        ((TextView)views.get(0).findViewById(R.id.updater_episode_static)).setText(r2.getMyChapter()+"/"+r2.getChapter());
-                        ((EditText)views.get(0).findViewById(R.id.updater_new_episode)).setText(Integer.toString (r2.getMyChapter()));
+                    else
+                        executeUpdate(view);
+                    ((TextView) views.get(0).findViewById(R.id.updater_episode_static)).setText(r2.getMyChapter() + "/" + (r2.getChapter()==0?"-":r2.getChapter()));
+                    ((EditText)views.get(0).findViewById(R.id.updater_new_episode)).setText(Integer.toString (r2.getMyChapter()));
+                }
+            });
+            views.get(1).findViewById(R.id.updater_adder).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    r2.setMyVolumes(
+                            ((Button)(views.get(1).findViewById(R.id.updater_adder))).getText().toString().equals("+1")?(r2.getMyVolumes()+1):Integer.parseInt(((EditText)views.get(1).findViewById(R.id.updater_new_episode)).getText().toString()));
+                    returnToDefault(views.get(1));
+                    if(r2.getMyVolumes()==r2.getVolumes()){
+                        makeCompleted(view);
                     }
-                });
-                ((TextView) views.get(1).findViewById(R.id.updater_episode_static)).setText(r2.getMyVolumes() + "/" + r2.getVolumes());
-                ((TextView) views.get(1).findViewById(R.id.updater_episode_total)).setText(Integer.toString(r2.getVolumes()));
-                ((EditText) views.get(1).findViewById(R.id.updater_new_episode)).setText(Integer.toString(r2.getMyVolumes()));
-                views.get(1).findViewById(R.id.updater_adder).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        r2.setMyVolumes(
-                        ((Button)(views.get(1).findViewById(R.id.updater_adder))).getText().toString()=="+1"?(r2.getMyVolumes()+1):Integer.parseInt(((EditText)views.get(1).findViewById(R.id.updater_new_episode)).getText().toString()));
-                        returnToDefault(views.get(1));
-                        if(r2.getMyVolumes()==r2.getVolumes()){
-                            makeCompleted(view);
-                        }
-                        else
-                            executeUpdate(view);
-                        ((TextView)views.get(1).findViewById(R.id.updater_episode_static)).setText(r2.getMyVolumes()+"/"+r2.getVolumes());
-                        ((EditText)views.get(1).findViewById(R.id.updater_new_episode)).setText(Integer.toString (r2.getMyVolumes()));
-                    }
-                });
-            }
-            for(int a=0;a<views.size();a++){
-                final int jj=a;
-                views.get(a).findViewById(R.id.updater_open_episodes_menu).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        setListener(views.get(jj));
-                    }
-                });
-                ((LinearLayout)findViewById(R.id.is_in_list)).addView(views.get(a));
-            }
+                    else
+                        executeUpdate(view);
+                    ((TextView) views.get(1).findViewById(R.id.updater_episode_static)).setText(r2.getMyVolumes() + "/" + (r2.getVolumes()==0?"-":r2.getVolumes()));
+                    ((EditText)views.get(1).findViewById(R.id.updater_new_episode)).setText(Integer.toString (r2.getMyVolumes()));
+                }
+            });
+        }
     }
 
     void executeUpdate(View view){
@@ -294,7 +321,15 @@ public class EntryActivity extends AppCompatActivity {
             case R.id.action_remove:
                 MalAPI.remove(this,(anime?r1:r2).getID(),anime);
                 r1=null;r2=null;
-                loadListNull();
+                LinearLayout s=(LinearLayout)findViewById(R.id.is_in_list);
+                Animator op= ViewAnimationUtils.createCircularReveal(s,s.getRight(),s.getTop(),(int)Math.hypot(
+                        s.getWidth(),
+                        s.getHeight()
+                ),0);
+                s.setVisibility(View.GONE);
+                op.start();
+                EntryList.reloadOwn(anime);
+                loadList();
                 break;
         }
 
@@ -306,14 +341,15 @@ public class EntryActivity extends AppCompatActivity {
         builder.setMessage("Set this "+(anime?"Anime":"Manga")+" as completed?");
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                (anime?r1:r2).setMyStatus(2);
+                //(anime?r1:r2).setMyStatus(2);
+                ((Spinner)findViewById(R.id.entry_status)).setSelection(1);
                 executeUpdate(view);
             }
         });
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 dialog.cancel();
-                ((Spinner)findViewById(R.id.entry_status)).setSelection(1);
+
                 executeUpdate(view);
             }
         });
