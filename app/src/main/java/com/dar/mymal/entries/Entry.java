@@ -1,6 +1,9 @@
 package com.dar.mymal.entries;
 
+import android.text.Html;
 import android.util.Log;
+
+import com.dar.mymal.utils.MalAPI;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -26,17 +29,18 @@ public abstract class Entry {
     public Entry(String xml){
         XML=xml;
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        format.setLenient(false);
         try {
-            start = format.parse(findTagValue("series_start"));
-            finish = format.parse(findTagValue("series_end"));
-            mystart = format.parse(findTagValue("my_start_date"));
-            myfinish = format.parse(findTagValue("my_finish_date"));
+            start    = findTagValue("series_start")  .equals("0000-00-00")?null:format.parse(findTagValue("series_start")  );
+            finish   = findTagValue("series_end")    .equals("0000-00-00")?null:format.parse(findTagValue("series_end")    );
+            mystart  = findTagValue("my_start_date") .equals("0000-00-00")?null:format.parse(findTagValue("my_start_date") );
+            myfinish = findTagValue("my_finish_date").equals("0000-00-00")?null:format.parse(findTagValue("my_finish_date"));
         } catch (ParseException e) {
             Log.e("OnMALError","Error parsing entry: "+e.getMessage());
         }
-        title=findTagValue("series_title");
-        tags=findTagValue("my_tags");
-        synonyms=findTagValue("series_synonyms");
+        title= Html.fromHtml(findTagValue("series_title")).toString();
+        tags=Html.fromHtml(findTagValue("my_tags")).toString();
+        synonyms=Html.fromHtml(findTagValue("series_synonyms")).toString();
         imageURL=findTagValue("series_image");
         type=Integer.parseInt(findTagValue("series_type"));
         status=Integer.parseInt(findTagValue("series_status"));
@@ -53,14 +57,14 @@ public abstract class Entry {
     public int     getType        ()         {return type;}
     public int     getStatus      ()         {return status;}
     public Date    getStart       ()         {return start;}
-    public String  getStart       (String f) {return new SimpleDateFormat(f).format(start);}
+    public String  getStart       (String f) {return start==null?"0000-00-00":new SimpleDateFormat(f).format(start);}
     public Date    getFinish      ()         {return finish;}
-    public String  getFinish      (String f) {return new SimpleDateFormat(f).format(finish);}
+    public String  getFinish      (String f) {return finish==null?"0000-00-00":new SimpleDateFormat(f).format(finish);}
     public String  getImageURL    ()         {return imageURL;}
     public Date    getMyStart     ()         {return mystart;}
-    public String  getMyStart     (String f) {return new SimpleDateFormat(f).format(mystart);}
+    public String  getMyStart     (String f) {return mystart==null?"0000-00-00":new SimpleDateFormat(f).format(mystart);}
     public Date    getMyFinish    ()         {return myfinish;}
-    public String  getMyFinish    (String f) {return new SimpleDateFormat(f).format(myfinish);}
+    public String  getMyFinish    (String f) {return myfinish==null?"0000-00-00":new SimpleDateFormat(f).format(myfinish);}
     public int     getScore       ()         {return score;}
     public int     getMyStatus    ()         {return mystatus;}
     public int     getMyStatus    (boolean s){return (s&&mystatus==5)?6:mystatus;}

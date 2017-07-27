@@ -16,7 +16,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:animateLayoutChanges="true"
             android:orientation="vertical">
 
             <TextView
@@ -34,7 +33,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:visibility="gone"></LinearLayout>
+                android:visibility="gone"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -69,8 +68,15 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:animateLayoutChanges="true"
                         android:entries="@array/status_anime" />
+
+                    <Switch
+                        android:id="@+id/entry_rewatch"
+                        style="@style/Base.Widget.AppCompat.DropDownItem.Spinner"
+                        android:visibility="visible"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Switch" />
 
                     <Spinner
                         android:id="@+id/entry_score"
@@ -78,8 +84,193 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:animateLayoutChanges="true"
                         android:entries="@array/score_array" />
+
+
+
+                    <LinearLayout
+                        android:id="@+id/updater_master_0"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <LinearLayout
+                            android:id="@+id/updater_sub_0"
+                            android:layout_width="0dp"
+                            android:visibility="gone"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="6"
+                            android:orientation="horizontal">
+
+                            <EditText
+                                android:id="@+id/updater_edit_0"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="2"
+                                android:ems="10"
+                                android:gravity="center"
+                                android:inputType="number" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="/" />
+
+                            <TextView
+                                android:id="@+id/updater_total_0"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="2"
+                                android:gravity="center"
+                                android:text="N Ep" />
+                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/updater_static_0"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="6"
+                            android:text="999/999"
+                            android:textAlignment="center" />
+
+                        <Button
+                            android:id="@+id/updater_adder_0"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:text="+1" />
+
+                        <Button
+                            android:id="@+id/updater_opener_0"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:text="✍" />
+                    </LinearLayout>
+
+
+
+
+                    <LinearLayout
+                        android:id="@+id/updater_master_1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <LinearLayout
+                            android:id="@+id/updater_sub_1"
+                            android:layout_width="0dp"
+                            android:visibility="gone"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="6"
+                            android:orientation="horizontal">
+
+                            <EditText
+                                android:id="@+id/updater_edit_1"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="2"
+                                android:ems="10"
+                                android:gravity="center"
+                                android:inputType="number" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="/" />
+
+                            <TextView
+                                android:id="@+id/updater_total_1"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="2"
+                                android:gravity="center"
+                                android:text="N Ep" />
+                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/updater_static_1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="6"
+                            android:text="999/999"
+                            android:textAlignment="center" />
+
+                        <Button
+                            android:id="@+id/updater_adder_1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:text="+1" />
+
+                        <Button
+                            android:id="@+id/updater_opener_1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:text="✍" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/updater_master_2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <LinearLayout
+                            android:id="@+id/updater_sub_2"
+                            android:layout_width="0dp"
+                            android:visibility="gone"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="6"
+                            android:orientation="horizontal">
+
+                            <EditText
+                                android:id="@+id/updater_edit_2"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="2"
+                                android:ems="10"
+                                android:gravity="center"
+                                android:inputType="number" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="/" />
+
+                            <TextView
+                                android:id="@+id/updater_total_2"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="2"
+                                android:gravity="center"
+                                android:text="N Ep" />
+                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/updater_static_2"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="6"
+                            android:text="999/999"
+                            android:textAlignment="center" />
+
+                        <Button
+                            android:id="@+id/updater_adder_2"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:text="+1" />
+
+                        <Button
+                            android:id="@+id/updater_opener_2"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:text="✍" />
+                    </LinearLayout>
+
+
 
 
                 </LinearLayout>
@@ -120,16 +311,46 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/entry_dates"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/entry_start"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:textAlignment="center"
+                    android:focusable="false"
+                    android:ems="10"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:inputType="date" />
+                <EditText
+                    android:id="@+id/entry_finish"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:textAlignment="center"
+                    android:focusable="false"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:ems="10"
+                    android:inputType="date" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/entry_infos"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"></LinearLayout>
+                android:orientation="vertical"/>
 
             <LinearLayout
                 android:id="@+id/entry_relative"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"></LinearLayout>
+                android:orientation="vertical"/>
             <Button
                 android:id="@+id/view_rec"
                 android:layout_width="match_parent"
@@ -140,6 +361,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="View Reviews" />
+
             <TextView
                 style="@style/Base.TextAppearance.AppCompat.Widget.PopupMenu.Header"
                 android:layout_width="match_parent"
@@ -160,6 +382,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
+                android:layout_marginBottom="10dp"
                 android:text="View on MAL" />
         </LinearLayout>
     </ScrollView>

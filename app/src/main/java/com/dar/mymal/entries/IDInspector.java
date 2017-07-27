@@ -49,7 +49,7 @@ public class IDInspector {
         int lastI=0;
         while(lastI<str.indexOf("nowrap=\"\"",lastI)){
             lastI=str.indexOf("nowrap=\"\"",lastI)+6;
-            si.add(new Tuple2<>(str.substring(str.indexOf('>',lastI)+1,str.indexOf('<',lastI)-1),lastI));}
+            si.add(new Tuple2<>(Html.fromHtml(str.substring(str.indexOf('>',lastI)+1,str.indexOf('<',lastI)-1)).toString(),lastI));}
         List<Tuple3<Integer,Boolean,String>>g;
         for(int a=0;a<si.size();a++){
             String sub=str.substring(si.get(a).getB(),(a+1)==si.size()?str.length():si.get(a+1).getB());
@@ -59,7 +59,7 @@ public class IDInspector {
                 lastI=sub.indexOf("href",lastI)+7;
                 String ss=sub.substring(lastI,sub.indexOf('<',lastI));
                 if(Integer.parseInt(ss.substring(6,ss.indexOf('/',6)))!=id)
-                    g.add(new Tuple3<>(Integer.parseInt(ss.substring(6,ss.indexOf('/',6))),ss.charAt(0)=='a',ss.substring(ss.indexOf('>')+1)));
+                    g.add(new Tuple3<>(Integer.parseInt(ss.substring(6,ss.indexOf('/',6))),ss.charAt(0)=='a',Html.fromHtml(ss.substring(ss.indexOf('>')+1)).toString()));
             }
             fin.add(new Tuple2(si.get(a).getA(),g));
         }
@@ -92,7 +92,7 @@ public class IDInspector {
             int where=a<y?0:a<jj.size()-5?1:2;
             int start=jj.get(a).getA()+jj.get(a).getB().length()+1;
             int end=(a+1)==jj.size()?str.length():jj.get(a+1).getA();
-            String ooo=str.substring(start,end).replace("  ","").trim();
+            String ooo=Html.fromHtml(str.substring(start,end).replace("  ","").trim()).toString();
             if(jj.get(a).getB().equals("Score"))ooo=ooo.substring(0,ooo.indexOf(')')+1);
             if(jj.get(a).getB().equals("Ranked"))ooo=ooo.substring(0,ooo.lastIndexOf('2'));
             Tuple2<String,String>op=new Tuple2(jj.get(a).getB(),ooo);

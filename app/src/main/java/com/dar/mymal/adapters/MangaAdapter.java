@@ -99,7 +99,7 @@ public class MangaAdapter extends RecyclerView.Adapter<MangaAdapter.ViewHolder> 
                 }
             }
         });
-        if(EntryList.isSame()) {
+        if(EntryList.isSame()&&(ent.getMyStatus()!=2||ent.getRewatch())) {
             holder.progress1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -117,7 +117,7 @@ public class MangaAdapter extends RecyclerView.Adapter<MangaAdapter.ViewHolder> 
             holder.adder1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(ent.getMyChapter()<ent.getChapter()){
+                    if(ent.getChapter()==0||ent.getMyChapter()<ent.getChapter()){
                     ent.setMyChapter(ent.getMyChapter() + 1);
                     MalAPI.update(context,ent);
                         holder.progress1.setText(ent.getMyChapter() + "/" + (ent.getChapter()==0?"-":ent.getChapter()));
@@ -127,7 +127,7 @@ public class MangaAdapter extends RecyclerView.Adapter<MangaAdapter.ViewHolder> 
             holder.adder2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(ent.getMyVolumes()<ent.getVolumes()){
+                    if(ent.getVolumes()==0||ent.getMyVolumes()<ent.getVolumes()){
                     ent.setMyVolumes(ent.getMyVolumes() + 1);
                     MalAPI.update(context,ent);
                         holder.progress2.setText(ent.getMyVolumes() + "/" + (ent.getVolumes()==0?"-":ent.getVolumes()));}

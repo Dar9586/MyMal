@@ -1,5 +1,6 @@
 package com.dar.mymal.entries.recommendation;
 
+import android.text.Html;
 import android.util.Log;
 
 import com.dar.mymal.entries.*;
@@ -14,6 +15,7 @@ import java.util.List;
 public class Recommendation {
     String html,imageURL,title;
     int id,howMany;
+    boolean isAnime=true;
     List<SingleRecommendation> rec=new ArrayList<>();
 
     public String getImageURL() {
@@ -44,7 +46,7 @@ public class Recommendation {
         String h=html.substring(html.indexOf("a href")+15);
         id=Integer.parseInt(h.substring(0,h.indexOf('/')));
         h=h.substring(h.indexOf("<strong>")+8);
-        title=h.substring(0,h.indexOf("</strong>"));
+        title= Html.fromHtml(h.substring(0,h.indexOf("</strong>"))).toString();
     }
     void setImageURL(){
         String h=html.substring(html.indexOf("data-src")+10);
@@ -63,16 +65,21 @@ public class Recommendation {
             Log.d("OnMALDebug",text);
             last=html.indexOf("/profile/",last)+9;
             user=html.substring(last,html.indexOf('"',last));
-            rec.add(new SingleRecommendation(user,text));
+            rec.add(new SingleRecommendation(Html.fromHtml(user).toString(),Html.fromHtml(text).toString()));
         }
     }
 
-    public Recommendation(String html) {
+    public Recommendation(String html,boolean anime) {
         this.html = html;
+        this.isAnime=anime;
         setId();
         setImageURL();
         setRec();
         setHowMany();
+    }
+
+    public boolean isAnime() {
+        return isAnime;
     }
 
     @Override

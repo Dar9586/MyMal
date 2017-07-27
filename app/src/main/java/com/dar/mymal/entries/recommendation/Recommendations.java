@@ -55,7 +55,7 @@ public class Recommendations {
         while(true){
             last=html.indexOf("<table",last+1);
             if(last<0)break;
-            rec.add(new Recommendation(html.substring(html.indexOf("<table",last),html.indexOf("</table",last))));
+            rec.add(new Recommendation(html.substring(html.indexOf("<table",last),html.indexOf("</table",last)),anime));
         }
     }
 

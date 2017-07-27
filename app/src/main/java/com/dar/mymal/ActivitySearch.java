@@ -13,13 +13,14 @@ import com.dar.mymal.utils.MalAPI;
 
 public class ActivitySearch extends AppCompatActivity {
     RecyclerView mRecyclerView;
-    boolean isAnime=true,useLessData=false;
+    boolean isAnime,useLessData=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        isAnime=getIntent().getBooleanExtra("ISANIME",true);
         SearchView search=(SearchView)findViewById(R.id.searcher);
         search.setIconified(false);
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

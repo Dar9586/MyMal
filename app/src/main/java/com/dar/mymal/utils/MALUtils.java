@@ -30,7 +30,6 @@ public  class MALUtils {
             }
             int j=fina.indexOf("og:description")+25;
             return fina.substring(j,fina.indexOf("\"",j));
-            //System.out.println("Sub3:"+(System.nanoTime()-t));
         } catch(Exception e) {}
         return "";
     }

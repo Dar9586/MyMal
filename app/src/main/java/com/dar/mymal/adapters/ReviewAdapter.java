@@ -61,8 +61,6 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
 
     @Override
     public ReviewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        //View myView = LayoutInflater.from(parent.getContext()).inflate(R.layout.entry_layout_anime, parent, false);
-        //ViewHolder vh = new ViewHolder(myView);
         return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.single_review, parent, false));
     }
 
@@ -73,7 +71,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
             new DownloadImage(holder.imgView).execute(ent.getImageURL());
         }
         holder.author.setText(ent.getUser());
-        holder.rew.setText(ent.getReview());
+        holder.rew.setText(Html.fromHtml(ent.getReview()));
         holder.helpful.setText(ent.getHelpful()+" people found this review helpful");
         holder.date.setText(new SimpleDateFormat("dd/MM/yyyy").format(ent.getDate()));
         holder.progress.setText(ent.getEpisodeSeen()+" episodes seen");
@@ -89,6 +87,14 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
             @Override
             public void onClick(View v) {
                 holder.other.setVisibility(holder.other.getVisibility()==View.GONE?View.VISIBLE:View.GONE);
+            }
+        });
+        holder.rew.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                holder.rew.setMaxLines(holder.rew.getMaxLines()==10?9999:10);
+
+
             }
         });
     }

@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
                     editor.putBoolean(getString(R.string.prop_logged), true);
                     editor.putString(getString(R.string.prop_user), s.getUsername());
                     editor.putString(getString(R.string.prop_head), s.getEncoded());
-                    editor.commit();
+                    editor.apply();
                     launchIntent();
                 }
             }
@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         startActivity(i);
+        finish();
     }
 }
 

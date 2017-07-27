@@ -19,14 +19,18 @@ public class EntryList {
         ownlist=MALUtils.getEntries(ownUser);
     }
     public static void reloadOther(boolean anime){
-        if(issame)
-            actualList[anime?0:1]=ownlist[anime?0:1];
+        if(issame) {
+            reloadOwn(anime);
+            actualList[anime ? 0 : 1] = ownlist[anime ? 0 : 1];
+        }
         else
             actualList[anime?0:1]=anime?MALUtils.getEntriesAnime(actualUser):MALUtils.getEntriesManga(actualUser);
     }
     public static void reloadOther(){
-        if(issame)
-            actualList=ownlist;
+        if(issame) {
+            reloadOwn();
+            actualList = ownlist;
+        }
         else
             actualList=MALUtils.getEntries(actualUser);
     }
@@ -43,7 +47,14 @@ public class EntryList {
         issame=actualUser.equals(ownUser);
         reloadOther();
     }
-
+    public static int totalEntries(boolean anime){
+        int sum=0;
+        for(int a=0;a<5;a++)sum+=actualList[anime?0:1][a].size();
+        return sum;
+    }
+    public static int totalEntries(){
+        return totalEntries(true)+totalEntries(false);
+    }
     public static String getOwnUser() {
         return ownUser;
     }

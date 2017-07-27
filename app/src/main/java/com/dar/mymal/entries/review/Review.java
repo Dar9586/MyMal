@@ -20,7 +20,7 @@ public class Review {
     List<Integer> scores=new ArrayList<>();
 
     void setUser() {
-        user=html.substring(html.indexOf("/profile/")+9,html.indexOf('"',html.indexOf("/profile/")+9));
+        user=Html.fromHtml(html.substring(html.indexOf("/profile/")+9,html.indexOf('"',html.indexOf("/profile/")+9))).toString();
     }
 
     void setReview() {

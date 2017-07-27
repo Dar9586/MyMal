@@ -7,6 +7,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -91,7 +92,8 @@ public class AnimeAdapter extends RecyclerView.Adapter<AnimeAdapter.ViewHolder> 
                 }
             }
         });
-        if(EntryList.isSame()) {            holder.progress.setOnClickListener(new View.OnClickListener() {
+        if(EntryList.isSame()&&(ent.getMyStatus()!=2||ent.getRewatch())) {
+            holder.progress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -102,7 +104,7 @@ public class AnimeAdapter extends RecyclerView.Adapter<AnimeAdapter.ViewHolder> 
             holder.adder.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(ent.getMyEpisodes()<ent.getEpisodes()){
+                    if(ent.getEpisodes()==0||ent.getMyEpisodes()<ent.getEpisodes()){
                     ent.setMyEpisodes(ent.getMyEpisodes() + 1);
                     MalAPI.update(context,ent);
                         holder.progress.setText(ent.getMyEpisodes() + "/" + (ent.getEpisodes()==0?"-":ent.getEpisodes()));}

@@ -58,8 +58,6 @@ public class ListLoader extends AppCompatActivity
     int actuallySee=0;
     public static String actualUser;
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
     Tuple2<String,Integer>[] listDataHeader;
     List<Tuple2<String,Integer>>[] listDataChild;
     ExpandableListView expand;
@@ -76,13 +74,10 @@ public class ListLoader extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-        final SwipeRefreshLayout swipeRefresh=(SwipeRefreshLayout)findViewById(R.id.swiperefresh);
-        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        ((SwipeRefreshLayout)findViewById(R.id.swiperefresh)).setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                loadEntries(actualUser);
-                loadList(actuallySee,anime);
-                swipeRefresh.setRefreshing(false);
+                refreshList();
             }
         });
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -96,18 +91,17 @@ public class ListLoader extends AppCompatActivity
                                       public void onClick(View view) {
                                           search.setIconified(true);
                                           Intent i=new Intent(getApplicationContext(),ActivitySearch.class);
+                                          i.putExtra("ISANIME",anime);
                                           startActivity(i);
 
                                           //makeSearch(s);
                                       }
                                   });
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mRecyclerView.setOverScrollMode(ListView.OVER_SCROLL_NEVER);
-        mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        loadList(actuallySee,anime);
         // setting list adapter
         expand=(ExpandableListView)findViewById(R.id.expand_view);
-        loadExtendMenu();
         expand.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
@@ -131,10 +125,16 @@ public class ListLoader extends AppCompatActivity
                 return true;
             }
         });
-        SnapHelper helper = new LinearSnapHelper();
-        helper.attachToRecyclerView(mRecyclerView);
-        loadList(actuallySee,anime);
 
+
+    }
+
+    private void refreshList() {
+        ((SwipeRefreshLayout)findViewById(R.id.swiperefresh)).setRefreshing(true);
+        loadEntries(actualUser);
+        loadList(actuallySee,anime);
+        loadExtendMenu();
+        ((SwipeRefreshLayout)findViewById(R.id.swiperefresh)).setRefreshing(false);
     }
 
     private void switchUser() {
@@ -145,9 +145,7 @@ public class ListLoader extends AppCompatActivity
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 actualUser=input.getText().toString();
-                loadEntries(actualUser);
-                loadList(actuallySee,anime);
-                loadExtendMenu();
+                refreshList();
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -210,14 +208,19 @@ public class ListLoader extends AppCompatActivity
     }
 
     @Override
+    protected void onResume() {
+        refreshList();
+        super.onResume();
+    }
+
+    @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         return true;
     }
 
     private void loadList(int actuallySee, boolean anime) {
-        if(anime){mAdapter = new AnimeAdapter(this,actuallySee,useLessData,getCacheFile());}
-        else{mAdapter = new MangaAdapter(this,actuallySee,useLessData,getCacheFile());}
-        mRecyclerView.setAdapter(mAdapter);
+        if(anime){mRecyclerView.setAdapter(new AnimeAdapter(this,actuallySee,useLessData,getCacheFile()));}
+        else{mRecyclerView.setAdapter(new MangaAdapter(this,actuallySee,useLessData,getCacheFile()));}
     }
     protected static List<String> getCacheFile(){
         String pathImg= Environment.getExternalStorageDirectory().getAbsolutePath()+"/myMalCache";

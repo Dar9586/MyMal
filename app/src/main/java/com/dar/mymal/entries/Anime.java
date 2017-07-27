@@ -1,5 +1,8 @@
 package com.dar.mymal.entries;
 
+import com.dar.mymal.utils.MalAPI;
+
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 /**
@@ -11,7 +14,7 @@ public class Anime extends Entry{
         super(xml);
         isanime=true;
         id=Integer.parseInt(findTagValue("series_animedb_id"));
-        rewatch=findTagValue("my_rewatching")!="0";
+        rewatch=findTagValue("my_rewatching").equals("1");
         totEpisode=Integer.parseInt(findTagValue("series_episodes"));
         watched=Integer.parseInt(findTagValue("my_watched_episodes"));
     }

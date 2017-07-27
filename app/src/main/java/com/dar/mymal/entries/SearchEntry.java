@@ -1,5 +1,6 @@
 package com.dar.mymal.entries;
 
+import android.text.Html;
 import android.util.Log;
 
 import java.text.DateFormat;
@@ -60,13 +61,13 @@ public class SearchEntry {
             Log.e("OnMALError","Error parsing: "+e.getMessage());
         }
         isanime=anime;
-        title=findTagValue("title");
-        type=findTagValue("type");
-        english=findTagValue("english");
-        synonyms=findTagValue("synonyms");
-        synopsis=findTagValue("synopsis");
+        title= Html.fromHtml(findTagValue("title")).toString();
+        type=Html.fromHtml(findTagValue("type")).toString();
+        english=Html.fromHtml(findTagValue("english")).toString();
+        synonyms=Html.fromHtml(findTagValue("synonyms")).toString();
+        synopsis=Html.fromHtml(findTagValue("synopsis")).toString();
         image=findTagValue("image");
-        status=findTagValue("status");
+        status=Html.fromHtml(findTagValue("status")).toString();
         score=Float.parseFloat(findTagValue("score"));
         id = Integer.parseInt(findTagValue("id"));
         episodes=Integer.parseInt(findTagValue(isanime?"episodes":"chapters"));
