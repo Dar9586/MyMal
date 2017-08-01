@@ -127,4 +127,6 @@
 
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="title_activity_ossas">Settings</string>
+    <string name="title_activity_entry_viewer">EntryViewer</string>
+    <string name="section_format">Hello World from section: %1$d</string>
 </resources>

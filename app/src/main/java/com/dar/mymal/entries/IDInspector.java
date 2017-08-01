@@ -1,12 +1,22 @@
 package com.dar.mymal.entries;
 
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.text.Html;
 import android.util.Log;
 
+import com.dar.mymal.entries.recommendation.Recommendations;
+import com.dar.mymal.entries.review.Reviews;
 import com.dar.mymal.tuple.Tuple2;
 import com.dar.mymal.tuple.Tuple3;
 import com.dar.mymal.downloader.DownloadURL;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,11 +33,26 @@ public class IDInspector {
     boolean anime;
     List<Tuple2<String,List<Tuple3<Integer,Boolean,String>>>> rel;
     Tuple2<String,List<Tuple2<String,String>>>[] info;
+    String[][]songs={{},{}};
     String html,url,imageURL,description;
+    Reviews rew;
+    Recommendations rec;
+    LoadReviews async;
+    Characters characters;
     public IDInspector(int id,boolean anime){
         this.id=id;
         this.anime=anime;
         url="https://myanimelist.net/"+(anime?"anime":"manga")+"/"+id;
+        mainLoad();
+    }
+    public IDInspector(String url){
+        this.url=url;
+        Log.d("OnMALDebug",url.substring(24,29)+", "+url.substring(30,url.indexOf('/',31)));
+        this.anime=url.substring(24,29).equals("anime");
+        this.id=Integer.parseInt(url.substring(30,url.indexOf('/',31)));
+        mainLoad();
+    }
+    private void mainLoad(){
         Log.i("OnMALInfo","Inspecting: "+url);
         try {
             html = new DownloadURL().execute(url).get();
@@ -37,14 +62,74 @@ public class IDInspector {
         loadDescription();
         loadRelation();
         loadInfo();
+        loadSongs();
+        async=new LoadReviews(this);
+        async.execute();
     }
 
+    public Characters getCharacters() {
+        return characters;
+    }
+
+    public LoadReviews getAsync() {
+        return async;
+    }
+
+    public Reviews getRew() {
+        return rew;
+    }
+
+    public Recommendations getRec() {
+        return rec;
+    }
+
+    public class LoadReviews extends AsyncTask<Void, String, Void> {
+        IDInspector l;
+        int status;
+        @Override
+        protected void onPreExecute() {
+
+        }
+
+        public LoadReviews(IDInspector l) {
+            this.l=l;
+        }
+        @Override
+        protected void onPostExecute(Void x)
+        {
+        }
+
+        public int getStat() {
+            return status;
+        }
+
+        @Override
+        protected Void doInBackground(Void... f_url) {
+            Log.d("OnMALDebug","Starting load reviews");status=0;
+            l.rew= new Reviews(id,anime);
+            Log.d("OnMALDebug","Finish load reviews");status=1;
+            Log.d("OnMALDebug","Starting load reccomendations");status=2;
+            l.rec= new Recommendations(id,anime);
+            Log.d("OnMALDebug","Finish load reccomendations");status=3;
+            Log.d("OnMALDebug","Starting load characters");status=4;
+            l.characters=new Characters(id,anime);
+            Log.d("OnMALDebug","Finish load characters");status=5;
+            return null;
+        }
+
+    }
+
+    private void loadSongs(){
+        int pos=html.indexOf("theme-songs js-theme-songs opnening")+37;
+        songs[0]=html.substring(pos,html.indexOf("</div></div>",pos)).replace("<br>","\n").replaceAll("<[^>]*>","").split("\n");
+        pos=html.indexOf("theme-songs js-theme-songs ending")+35;
+        songs[1]=html.substring(pos,html.indexOf("</div></div>",pos)).replace("<br>","\n").replaceAll("<[^>]*>","").split("\n");
+    }
 
     void loadRelation(){
         List<Tuple2<String,List<Tuple3<Integer,Boolean,String>>>> fin=new ArrayList<>();
         String str=html;
         str=str.substring(str.indexOf("anime_detail_related_anime"),str.indexOf("detail-characters-list"));
-        System.out.println(str);
         List<Tuple2<String,Integer>>si=new ArrayList<>();
         int lastI=0;
         while(lastI<str.indexOf("nowrap=\"\"",lastI)){
@@ -125,7 +210,10 @@ public class IDInspector {
 
     public String getDescription() {return description;}
 
-    /*
+    public String[][] getSongs() {
+        return songs;
+    }
+/*
     * fin.get(i).getKey() title of the row
     * fin.get(i).getValue() get a list of tuple of boolean if is an anime,int for id and string for name
     * */

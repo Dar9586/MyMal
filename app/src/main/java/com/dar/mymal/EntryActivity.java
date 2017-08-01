@@ -9,6 +9,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
@@ -464,6 +466,14 @@ public class EntryActivity extends AppCompatActivity {
                 EntryList.reloadOwn(anime);
                 loadList();
                 break;
+            case R.id.action_test:
+                Intent i=new Intent(getApplicationContext(), EntryViewer.class);
+                i.putExtra("ENTRY_ID",id);
+                i.putExtra("ENTRY_TITLE",title);
+                i.putExtra("ENTRY_ISANIME",anime);
+                EntryViewer.entry=entry;
+                startActivity(i);
+                return true;
         }
 
         return super.onOptionsItemSelected(item);

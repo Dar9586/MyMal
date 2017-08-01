@@ -18,7 +18,7 @@ public class Recommendation {
     boolean isAnime=true;
     List<SingleRecommendation> rec=new ArrayList<>();
 
-    public String getImageURL() {
+    public  String getImageURL() {
         return imageURL;
     }
 
@@ -62,7 +62,6 @@ public class Recommendation {
             if(last==-1)break;
             last+=23;
             text=html.substring(last,html.indexOf("</div>",last))/*.replace("<br />","\n").replaceAll("<[^>]*>","")*/.replace("&nbsp;","").replace(">read more<","><");
-            Log.d("OnMALDebug",text);
             last=html.indexOf("/profile/",last)+9;
             user=html.substring(last,html.indexOf('"',last));
             rec.add(new SingleRecommendation(Html.fromHtml(user).toString(),Html.fromHtml(text).toString()));

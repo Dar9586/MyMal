@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import static android.os.AsyncTask.THREAD_POOL_EXECUTOR;
+
 /**
  * Created by stopp on 18/07/2017.
  */
@@ -21,7 +23,7 @@ public class Reviews {
     List<Review> rew=new ArrayList<>();
     void getHtml() {
         try {
-            html= new DownloadURL().execute(url).get();
+            html= new DownloadURL().executeOnExecutor(THREAD_POOL_EXECUTOR  ,url).get();
         } catch (InterruptedException|ExecutionException e) {
             Log.e("OnMALError","Error load Reviews for "+(anime?"anime":"manga")+" "+id+", "+e.getMessage());
         }
@@ -37,7 +39,6 @@ public class Reviews {
             last=html.indexOf("borderDark",last+1);
             if(last==-1)break;
             rew.add(new Review(html.substring(last,html.indexOf("button_form",last))));
-            System.out.println(rew.get(rew.size()-1).toString());
         }
     }
 
@@ -63,7 +64,6 @@ public class Reviews {
                 "anime=" + anime +
                 ", id=" + id +
                 ", url='" + url + '\'' +
-                ", html='" + html + '\'' +
                 ", rew=" + rew +
                 '}';
     }

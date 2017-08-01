@@ -45,7 +45,7 @@ public class DownloadImage extends AsyncTask<String, Void, Void> {
     }
     private Drawable downloadImage(String _url)
     {
-        Log.i("OnMALInfo","Downloading image from: "+_url);
+        //Log.i("OnMALInfo","Downloading image from: "+_url);
         URL url;
         BufferedOutputStream out;
         InputStream in;

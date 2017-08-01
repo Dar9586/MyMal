@@ -1,5 +1,6 @@
 package com.dar.mymal.entries.recommendation;
 
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.dar.mymal.downloader.DownloadURL;
@@ -21,7 +22,7 @@ public class Recommendations {
     List<Recommendation> rec=new ArrayList<>();
     void getHtml() {
         try {
-            html= new DownloadURL().execute(url).get();
+            html= new DownloadURL().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,url).get();
         } catch (InterruptedException|ExecutionException e) {
             Log.e("OnMALError","Error load RecommendationsActivity for "+(anime?"anime":"manga")+" "+id+", "+e.getMessage());
         }
