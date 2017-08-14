@@ -32,9 +32,10 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".RecommendationsActivity" />
         <activity
-            android:name=".EntryViewer"
-            android:label="@string/title_activity_entry_viewer"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:name=".SearchActivity2"
+            android:label="@string/title_activity_search2"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".TopActivity"></activity>
     </application>
 
 </manifest>

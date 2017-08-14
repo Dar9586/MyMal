@@ -10,7 +10,9 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.dar.mymal.utils.LoginData;
+import com.dar.mymal.global.EntryList;
+import com.dar.mymal.global.LoginData;
+import com.dar.mymal.global.Settings;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -36,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
                     editor.putBoolean(getString(R.string.prop_logged), true);
                     editor.putString(getString(R.string.prop_user), s.getUsername());
                     editor.putString(getString(R.string.prop_head), s.getEncoded());
+                    editor.putBoolean(getString(R.string.prop_anime), true);
+                    editor.putBoolean(getString(R.string.prop_data), false);
                     editor.apply();
                     launchIntent();
                 }
@@ -43,11 +47,15 @@ public class MainActivity extends AppCompatActivity {
         });
         SharedPreferences sharedPref = getSharedPreferences("Settings", 0);
         if(sharedPref.getBoolean(getString(R.string.prop_logged),false)){
+            Settings.setAnime(sharedPref.getBoolean(getString(R.string.prop_anime), true));
+            Settings.setUseLessData(sharedPref.getBoolean(getString(R.string.prop_data), false));
             new LoginData(sharedPref.getString(getString(R.string.prop_user),"ERRORE"), sharedPref.getString(getString(R.string.prop_head),"ERRORE"),true);
+
             launchIntent();
         }
     }
     void launchIntent(){
+        EntryList.loadOtherList(LoginData.getUsername());
         Intent i=new Intent(getApplicationContext(), ListLoader.class);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);

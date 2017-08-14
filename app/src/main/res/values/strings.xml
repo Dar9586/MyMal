@@ -6,6 +6,8 @@
     <string name="log_warn">OnMalWarn</string>
     <string name="log_error">OnMalError</string>
     <string name="log_debug">OnMalDebug</string>
+    <string name="prop_data">lessdata</string>
+    <string name="prop_anime">anime</string>
     <string name="prop_head">header</string>
     <string name="prop_user">username</string>
     <string name="prop_logged">islogged</string>
@@ -129,4 +131,6 @@
     <string name="title_activity_ossas">Settings</string>
     <string name="title_activity_entry_viewer">EntryViewer</string>
     <string name="section_format">Hello World from section: %1$d</string>
+    <string name="title_activity_toremove">toremove</string>
+    <string name="title_activity_search2">SearchActivity2</string>
 </resources>

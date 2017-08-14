@@ -18,6 +18,8 @@ import com.dar.mymal.EntryActivity;
 import com.dar.mymal.R;
 import com.dar.mymal.entries.SearchEntry;
 import com.dar.mymal.downloader.DownloadImage;
+import com.dar.mymal.global.Settings;
+import com.dar.mymal.utils.MALUtils;
 
 import java.util.List;
 
@@ -27,7 +29,6 @@ import java.util.List;
 
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder> {
     private List<SearchEntry> mDataset;
-    private boolean useLessData;
     Context context;
     List<String>files;
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -47,11 +48,10 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         }
     }
 
-    public SearchAdapter(Context cont, List<SearchEntry> myDataset, boolean useLessData, List<String> files) {
+    public SearchAdapter(Context cont, List<SearchEntry> myDataset) {
         this.context=cont;
         this.mDataset = myDataset;
-        this.useLessData=useLessData;
-        this.files=files;
+        this.files= MALUtils.getCacheFile();
     }
 
     @Override
@@ -66,7 +66,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         final SearchEntry ent=mDataset.get(position);
         if(files.contains((ent.isAnime()?"A":"M")+ent.getId()+".jpg")){
             holder.imgView.setImageDrawable(new BitmapDrawable(BitmapFactory.decodeFile(Environment.getExternalStorageDirectory().getAbsolutePath()+"/myMalCache/"+(ent.isAnime()?"A":"M")+ent.getId()+".jpg")));
-        }else if(!useLessData){
+        }else if(!Settings.isUsingLessData()){
             new DownloadImage(holder.imgView,Environment.getExternalStorageDirectory().getAbsolutePath()+"/myMalCache","A"+Integer.toString(ent.getId())).execute(ent.getImage());
         }
         holder.title.setText(Html.fromHtml(ent.getTitle()).toString());

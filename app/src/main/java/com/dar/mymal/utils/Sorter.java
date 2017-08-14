@@ -1,8 +1,7 @@
 package com.dar.mymal.utils;
 
-import com.dar.mymal.entries.Entry;
+import com.dar.mymal.entries.api.Entry;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;

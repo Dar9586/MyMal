@@ -9,20 +9,20 @@ import android.widget.ListView;
 import android.widget.SearchView;
 
 import com.dar.mymal.adapters.SearchAdapter;
+import com.dar.mymal.global.Settings;
 import com.dar.mymal.utils.MalAPI;
 
 public class ActivitySearch extends AppCompatActivity {
     RecyclerView mRecyclerView;
-    boolean isAnime,useLessData=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        isAnime=getIntent().getBooleanExtra("ISANIME",true);
         SearchView search=(SearchView)findViewById(R.id.searcher);
         search.setIconified(false);
+        search.setIconifiedByDefault(false);
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -44,6 +44,6 @@ public class ActivitySearch extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
     }
     void makeSearch(String s){
-        mRecyclerView.setAdapter(new SearchAdapter(this, MalAPI.search(this,s,isAnime),useLessData,ListLoader.getCacheFile()));
+        mRecyclerView.setAdapter(new SearchAdapter(this, MalAPI.search(this,s, Settings.isAnime())));
     }
 }

@@ -35,9 +35,6 @@ public class MenuAdapter extends BaseExpandableListAdapter {
             convertView = layoutInflater.inflate(R.layout.header_menu, null);
         }
         View f;
-        if(groupPosition==1){
-
-        }
         if(headers[groupPosition].getB()==-1){
             f=LayoutInflater.from(convertView.getContext()).inflate(R.layout.header_menu_void, parent, false);
             ((TextView)f.findViewById(R.id.expand_name)).setText(headers[groupPosition].getA());
@@ -58,7 +55,7 @@ public class MenuAdapter extends BaseExpandableListAdapter {
         }
         View f=LayoutInflater.from(convertView.getContext()).inflate(R.layout.child_menu, parent, false);
         ((TextView)f.findViewById(R.id.expand_name)).setText(childs[groupPosition].get(childPosition).getA());
-        ((TextView)f.findViewById(R.id.expand_num)).setText(childs[groupPosition].get(childPosition).getB().toString());
+        ((TextView)f.findViewById(R.id.expand_num)).setText(childs[groupPosition].get(childPosition).getB()==-1?"":childs[groupPosition].get(childPosition).getB().toString());
         return f;
     }
 

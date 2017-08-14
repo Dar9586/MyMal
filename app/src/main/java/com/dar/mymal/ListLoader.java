@@ -1,73 +1,54 @@
 package com.dar.mymal;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.util.Pair;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.widget.SearchView;
-import android.support.v7.widget.SnapHelper;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
-import android.widget.ListView;
-import android.widget.TextView;
 
-import com.dar.mymal.adapters.AnimeAdapter;
-import com.dar.mymal.adapters.MangaAdapter;
+import com.dar.mymal.adapters.listEntries.AnimeAdapter;
+import com.dar.mymal.adapters.listEntries.MangaAdapter;
 import com.dar.mymal.adapters.MenuAdapter;
-import com.dar.mymal.entries.Anime;
-import com.dar.mymal.entries.Entry;
-import com.dar.mymal.entries.Manga;
-import com.dar.mymal.entries.SearchEntry;
+import com.dar.mymal.entries.api.Entry;
+import com.dar.mymal.global.Settings;
 import com.dar.mymal.tuple.Tuple2;
-import com.dar.mymal.utils.EntryList;
-import com.dar.mymal.utils.LoginData;
+import com.dar.mymal.global.EntryList;
+import com.dar.mymal.global.LoginData;
 import com.dar.mymal.utils.MALUtils;
-import com.dar.mymal.utils.MalAPI;
-import com.dar.mymal.utils.Sorter;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ListLoader extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    boolean anime=true;
-    static boolean useLessData=false;
+    //boolean anime=true;
     int actuallySee=0;
     public static String actualUser;
     private RecyclerView mRecyclerView;
     Tuple2<String,Integer>[] listDataHeader;
     List<Tuple2<String,Integer>>[] listDataChild;
     ExpandableListView expand;
+    LinearLayoutManager linearLayoutManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        EntryList.reloadLists();
         //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -90,16 +71,13 @@ public class ListLoader extends AppCompatActivity
                                       @Override
                                       public void onClick(View view) {
                                           search.setIconified(true);
-                                          Intent i=new Intent(getApplicationContext(),ActivitySearch.class);
-                                          i.putExtra("ISANIME",anime);
+                                          Intent i=new Intent(getApplicationContext(),SearchActivity2.class);
                                           startActivity(i);
-
-                                          //makeSearch(s);
                                       }
                                   });
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        loadList(actuallySee,anime);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler);
+        linearLayoutManager=new LinearLayoutManager(this);
+        loadList(actuallySee);
         // setting list adapter
         expand=(ExpandableListView)findViewById(R.id.expand_view);
         expand.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
@@ -107,7 +85,7 @@ public class ListLoader extends AppCompatActivity
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
                 if(groupPosition==0){
                     switchList();
-                }else if(groupPosition==2){
+                }else if(groupPosition==4){
                     switchUser();
                 }
                 return false;
@@ -119,8 +97,14 @@ public class ListLoader extends AppCompatActivity
                 if(groupPosition==1){
                     if(actuallySee!=childPosition){
                         actuallySee=childPosition;
-                        loadList(actuallySee,anime);
+                        loadList(actuallySee);
                     }
+                }
+                else if(groupPosition==2||groupPosition==3){
+                    Intent i=new Intent(getApplicationContext(),TopActivity.class);
+                    i.putExtra("IS_ANIME",groupPosition==2);
+                    i.putExtra("TYPE",childPosition);
+                    startActivity(i);
                 }
                 return true;
             }
@@ -130,11 +114,11 @@ public class ListLoader extends AppCompatActivity
     }
 
     private void refreshList() {
-        ((SwipeRefreshLayout)findViewById(R.id.swiperefresh)).setRefreshing(true);
-        loadEntries(actualUser);
-        loadList(actuallySee,anime);
+        /*EntryList.loadOtherList(actualUser);*/
+        MALUtils.getListAsync(actualUser,EntryList.getOwnUser().equals(actualUser),findViewById(R.id.master_layout),this,actuallySee,((SwipeRefreshLayout)findViewById(R.id.swiperefresh)));
+        setTitle(actualUser+"'s List");
+        //loadList(actuallySee);
         loadExtendMenu();
-        ((SwipeRefreshLayout)findViewById(R.id.swiperefresh)).setRefreshing(false);
     }
 
     private void switchUser() {
@@ -157,30 +141,35 @@ public class ListLoader extends AppCompatActivity
     }
 
     void switchList(){
-        anime=!anime;
-        loadList(actuallySee,anime);
+        Settings.setAnime(!Settings.isAnime());
+        loadList(actuallySee);
         loadExtendMenu();
 
     }
     int totalEntry(){
         int sum=0;
-        for(int a=0;a<5;a++)sum+=EntryList.getActualList()[anime?0:1][a].size();
+        for(int a=0;a<5;a++)sum+=EntryList.getActualList()[Settings.isAnime()?0:1][a].size();
         return sum;
     }
     private void loadExtendMenu() {
-        listDataHeader = new Tuple2[]{new Tuple2<>("Switch to "+(anime?"manga":"anime"),-1),new Tuple2<>("List",totalEntry()),new Tuple2<>("Change user",-1)};
-        listDataChild = new List[]{new ArrayList(),new ArrayList(),new ArrayList()};
-        listDataChild[1].add(new Tuple2<>(Entry.getMyStatusList(anime)[0],EntryList.getActualList()[anime?0:1][0].size()));
-        listDataChild[1].add(new Tuple2<>(Entry.getMyStatusList(anime)[1],EntryList.getActualList()[anime?0:1][1].size()));
-        listDataChild[1].add(new Tuple2<>(Entry.getMyStatusList(anime)[2],EntryList.getActualList()[anime?0:1][2].size()));
-        listDataChild[1].add(new Tuple2<>(Entry.getMyStatusList(anime)[3],EntryList.getActualList()[anime?0:1][3].size()));
-        listDataChild[1].add(new Tuple2<>(Entry.getMyStatusList(anime)[4],EntryList.getActualList()[anime?0:1][4].size()));
+        listDataHeader = new Tuple2[]{new Tuple2<>("Switch to "+(Settings.isAnime()?"manga":"anime"),-1),new Tuple2<>("List",totalEntry()),new Tuple2<>("Top Anime",-1),new Tuple2<>("Top Manga",-1),new Tuple2<>("Change user",-1)};
+        listDataChild = new List[]{new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>()};
+        listDataChild[1].add(new Tuple2<>(Entry.getMyStatusList(Settings.isAnime())[0],EntryList.getActualList()[Settings.isAnime()?0:1][0].size()));
+        listDataChild[1].add(new Tuple2<>(Entry.getMyStatusList(Settings.isAnime())[1],EntryList.getActualList()[Settings.isAnime()?0:1][1].size()));
+        listDataChild[1].add(new Tuple2<>(Entry.getMyStatusList(Settings.isAnime())[2],EntryList.getActualList()[Settings.isAnime()?0:1][2].size()));
+        listDataChild[1].add(new Tuple2<>(Entry.getMyStatusList(Settings.isAnime())[3],EntryList.getActualList()[Settings.isAnime()?0:1][3].size()));
+        listDataChild[1].add(new Tuple2<>(Entry.getMyStatusList(Settings.isAnime())[4],EntryList.getActualList()[Settings.isAnime()?0:1][4].size()));
+        listDataChild[2].add(new Tuple2<>("Top",-1));
+        listDataChild[2].add(new Tuple2<>("Popularity",-1));
+        listDataChild[2].add(new Tuple2<>("Airing",-1));
+        listDataChild[2].add(new Tuple2<>("Upcoming",-1));
+        listDataChild[2].add(new Tuple2<>("Favorites",-1));
+        listDataChild[3].add(new Tuple2<>("Top",-1));
+        listDataChild[3].add(new Tuple2<>("Popularity",-1));
+        listDataChild[3].add(new Tuple2<>("Airing",-1));
+        listDataChild[3].add(new Tuple2<>("Upcoming",-1));
+        listDataChild[3].add(new Tuple2<>("Favorites",-1));
         expand.setAdapter(new MenuAdapter(this,listDataHeader, listDataChild));
-    }
-
-    void loadEntries(String user){
-        EntryList.loadOtherList(user);
-        setTitle(user+"'s List");
     }
 
     @Override
@@ -193,14 +182,16 @@ public class ListLoader extends AppCompatActivity
         getMenuInflater().inflate(R.menu.list, menu);
         return true;
     }
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
         switch (id) {
             case R.id.action_settings:
+                return true;
+            case R.id.action_alternative_search:
+                Intent i=new Intent(getApplicationContext(),ActivitySearch.class);
+                startActivity(i);
                 return true;
         }
 
@@ -214,22 +205,12 @@ public class ListLoader extends AppCompatActivity
     }
 
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         return true;
     }
 
-    private void loadList(int actuallySee, boolean anime) {
-        if(anime){mRecyclerView.setAdapter(new AnimeAdapter(this,actuallySee,useLessData,getCacheFile()));}
-        else{mRecyclerView.setAdapter(new MangaAdapter(this,actuallySee,useLessData,getCacheFile()));}
-    }
-    protected static List<String> getCacheFile(){
-        String pathImg= Environment.getExternalStorageDirectory().getAbsolutePath()+"/myMalCache";
-        File cacheFolder=new File(pathImg);
-        cacheFolder.mkdir();
-        File[] temp=cacheFolder.listFiles();
-        List<String> files= new ArrayList<>();
-        for(int a=0;a<temp.length;a++)files.add(temp[a].getName());
-        return files;
+    private void loadList(int actuallySee) {
+        ViewLoader.loadAdapterView(findViewById(R.id.master_layout),Settings.isAnime()?new AnimeAdapter(this,actuallySee):new MangaAdapter(this,actuallySee),linearLayoutManager);
     }
 }
 

@@ -7,8 +7,8 @@
         android:title="Remove from list"
         app:showAsAction="never" />
     <item
-        android:id="@+id/action_test"
+        android:id="@+id/action_view_on_mal"
         android:orderInCategory="200"
-        android:title="TEST"
+        android:title="View on MAL"
         app:showAsAction="never" />
 </menu>

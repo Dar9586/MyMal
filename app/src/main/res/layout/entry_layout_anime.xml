@@ -6,6 +6,8 @@
     >
 
     <android.support.v7.widget.CardView
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackgroundBorderless"
         android:id="@+id/itemCardView"
         android:layout_width="match_parent"
         android:layout_height="180dp"
@@ -14,7 +16,8 @@
         android:layout_marginTop="3dp"
         android:padding="3dp"
         app:cardCornerRadius="1dp"
-        app:cardElevation="4dp">
+        app:cardElevation="4dp"
+        >
 
         <LinearLayout
             android:id="@+id/master_layout"
@@ -25,6 +28,7 @@
             android:weightSum="100">
 
             <ImageView
+                android:contentDescription="Anime Cover"
                 android:id="@+id/image"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -52,7 +56,7 @@
                     android:gravity="center"
                     android:paddingBottom="5dp"
                     android:paddingTop="5dp"
-                    android:text="TITOLO"
+                    android:maxLines="2"
                     android:textAlignment="center" />
 
                 <TextView
@@ -63,10 +67,10 @@
                     android:gravity="center"
                     android:paddingBottom="5dp"
                     android:paddingTop="5dp"
-                    android:text="TV-Finished"
                     android:textAlignment="center" />
 
                 <LinearLayout
+                    android:baselineAligned="false"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
@@ -75,7 +79,6 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
                         android:gravity="end"
                         android:orientation="horizontal"
                         android:weightSum="12">
@@ -103,7 +106,7 @@
                                 android:layout_height="0dp"
                                 android:layout_weight="6"
                                 android:gravity="center"
-                                android:text="100/100" />
+                                 />
                         </LinearLayout>
 
                         <LinearLayout

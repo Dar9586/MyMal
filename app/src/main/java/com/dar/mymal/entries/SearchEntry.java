@@ -7,6 +7,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by atopp on 07/07/2017.
@@ -53,7 +54,7 @@ public class SearchEntry {
 
     public SearchEntry(String xml,boolean anime){
         XML=xml;
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         try {
             start = format.parse(findTagValue("start_date"));
             finish = format.parse(findTagValue("end_date"));

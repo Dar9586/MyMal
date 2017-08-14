@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
-
+    android:layout_height="wrap_content">
     <Button
         style="@style/Widget.AppCompat.Button.Borderless"
-
         android:id="@+id/basic_relation2"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:textColor="@android:color/holo_blue_bright"
         android:gravity="center_vertical"
         android:paddingTop="10dp"
@@ -17,6 +16,6 @@
         android:paddingBottom="10dp"
         android:minHeight="0dp"
         android:textAllCaps="false"
-        android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:text="LOLOL"
+    />
 </LinearLayout>
